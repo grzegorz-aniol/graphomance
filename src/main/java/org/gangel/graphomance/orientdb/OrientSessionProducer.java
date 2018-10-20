@@ -15,8 +15,7 @@ public class OrientSessionProducer implements SessionProducer {
     @Override
     public Session createSession(Connection connection) {
         OrientConnection c = Objects.requireNonNull((OrientConnection)connection);
-        return OrientSession.builder().session(c.getDb().open(opts.getDbName(), opts.getDbUser(), opts.getDbPassword()))
-                .build();
+        return new OrientSession(c.getDb().open(opts.getDbName(), opts.getDbUser(), opts.getDbPassword()));
     }
 
 }

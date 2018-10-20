@@ -1,5 +1,8 @@
-package org.gangel.graphomance;
+package org.gangel.graphomance.engine;
 
+import org.gangel.graphomance.Connection;
+import org.gangel.graphomance.ConnectionProducer;
+import org.gangel.graphomance.SessionProducer;
 import org.gangel.graphomance.metrics.Metrics;
 import org.gangel.graphomance.orientdb.OrientConnectionProducer;
 import org.gangel.graphomance.orientdb.OrientConnectionSettings;
@@ -15,10 +18,11 @@ public class TestLauncher {
 
         ConnectionProducer connProducer = new OrientConnectionProducer();
         OrientConnectionSettings connSetup = OrientConnectionSettings.builder()
-                    .dbName("DB")
-                .mode("remote")
-                .dbPath("localhost/DB")
-//                .dbPath("d:/dev/orientdb-3.0.8/databases")
+                .dbName("perf")
+//                .mode("remote")
+//                .dbPath("localhost/DB")
+                .mode("plocal")
+                .dbPath("c:/dev/tools/orientdb-3.0.9/databases")
                 .dbUser("admin").dbPassword("admin")
                 .dbAdminUser("root").dbAdminPassword("admin")
                 .build();
@@ -28,9 +32,15 @@ public class TestLauncher {
         TestBase test = new CreateSingleVertex();
         test.initialize(connection, sessionProducer);
 
+        System.out.println("Setup test...");
         test.setUpTest();
+        System.out.println("Starting test...");
         test.performTest();
+        System.out.println("Test done.");
+        System.out.println("Cleaning up...");
         test.cleanUpAfter();
+        System.out.println("Terminating...");
         test.terminate();
+        System.out.println("Done.");
     }
 }

@@ -5,7 +5,7 @@ apply plugin: 'idea'
 group 'org.ganagel'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 8
+sourceCompatibility = 10
 
 ext {
     orientDbVersion = '3.0.9'

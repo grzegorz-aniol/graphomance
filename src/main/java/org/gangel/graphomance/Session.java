@@ -9,19 +9,10 @@ public interface Session extends AutoCloseable, Closeable {
 
     void close();
 
-    void runScript(String script);
+    SchemaApi schemaApi();
 
-    default NodeIdentifier createNode(String className) {
-        return createNode(className, null);
-    }
+    ObjectApi objectApi();
 
-    NodeIdentifier createNode(String className, Map<String, Object> properties);
-
-    default RelationIdentifier createRelation(String className, NodeIdentifier fromNode, NodeIdentifier toNode) {
-        return createRelation(className, fromNode, toNode, null);
-    }
-
-    RelationIdentifier createRelation(String className, NodeIdentifier fromNode, NodeIdentifier toNode,
-                                      Map<String, Object> properties);
+    ManagementApi managementApi();
 
 }

@@ -1,5 +1,10 @@
 package org.gangel.graphomance.usecases;
 
+import com.codahale.metrics.SharedMetricRegistries;
+import com.codahale.metrics.Timer;
+import org.gangel.graphomance.IndexType;
+import org.gangel.graphomance.engine.TestLimit;
+
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,12 +13,10 @@ public class CreateSingleVertex extends TestBase {
 
     @Override
     public void setUpTest() {
-        final String query = "create class User if not exists extends V;\n" +
-                "create property User.login if not exists STRING (mandatory, notnull);\n" +
-                "create property User.uid if not exists STRING\t(mandatory, notnull);\n";
-//                "create index IDX_USER_ID if not exists on User(uid) unique_hash_index;";
-//                "create index IDX_USER_ID if not exists on User(uid) unique;";
-        session.runScript(query);
+        session.schemaApi().createClass("User");
+        session.schemaApi().createProperty("User", "login", String.class, true);
+        session.schemaApi().createProperty("User", "uid", String.class, true);
+//        session.schemaApi().createIndex("User_uid", "User", IndexType.DEFAULT, true, "uid");
     }
 
     @Override
@@ -21,34 +24,13 @@ public class CreateSingleVertex extends TestBase {
 
     }
 
-    private static class TestLimit {
-        private long maxIterations = 1;
-        private Duration minDuration = Duration.ofSeconds(1);
-        private long startTime;
-        private long cnt;
-
-        public TestLimit(long minIter, Duration minDuration) {
-            this.minDuration = minDuration;
-            this.maxIterations = minIter;
-            startTime = System.currentTimeMillis();
-        }
-
-        void increment() {
-            ++cnt;
-        }
-
-        boolean isDone() {
-            if (System.currentTimeMillis() - startTime < minDuration.toMillis()) {
-                return false;
-            }
-            return (cnt >= maxIterations);
-        }
-    }
-
     @Override
     public void performTest() {
 
-        TestLimit limit = new TestLimit(10_000, Duration.ofSeconds(30));
+        TestLimit limit = new TestLimit(10_000, Duration.ofSeconds(10));
+
+        Timer timerMetric = new Timer();
+        SharedMetricRegistries.getDefault().register("Create User vertex timer", timerMetric);
 
         Map<String, Object> props = new HashMap<>();
 
@@ -56,13 +38,16 @@ public class CreateSingleVertex extends TestBase {
         while (!limit.isDone()) {
             props.put("login", "name_" + ++cnt);
             props.put("uid", "uid_" + cnt);
-            session.createNode("User", props);
+            try (final Timer.Context timer = timerMetric.time()){
+                session.objectApi().createNode("User", props);
+            }
             limit.increment();
         }
     }
 
     @Override
     public void cleanUpAfter() {
-        session.runScript("delete vertex User; drop class User;");
+        session.objectApi().deleteAllNodes("User");
+        session.schemaApi().dropClass("User");
     }
 }
