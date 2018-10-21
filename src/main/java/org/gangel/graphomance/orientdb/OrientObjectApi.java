@@ -61,6 +61,7 @@ public class OrientObjectApi implements ObjectApi {
                                            Map<String, Object> properties) {
     try (OResultSet command = session.command(String.format("create edge %s", className))) {
       OResult res = Objects.requireNonNull(command.next(), "Can't read new relation ID");
+      Metrics.CREATED_RELATION_METER.mark();
       return EdgeId.build(res.getIdentity().get());
     }
 

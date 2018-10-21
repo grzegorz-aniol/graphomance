@@ -39,6 +39,11 @@ public class OrientSchemaApi implements SchemaApi {
   }
 
   @Override
+  public boolean classExists(String clsName) {
+    return session.getClass(clsName) != null;
+  }
+
+  @Override
   public void createClass(String clsName) {
     managementApi.runScript(String.format("create class %s if not exists extends V;", clsName));
   }
@@ -63,7 +68,7 @@ public class OrientSchemaApi implements SchemaApi {
   public void createIndex(final String indexName, final String clsName, final IndexType indexType, boolean isUnique, String... propNames ) {
     //"create index IDX_USER_ID if not exists on User(uid) unique;";
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("create index %s if not exists on %s(%s) ",
+    sb.append(String.format("create index %s if not exists on %s (%s) ",
         indexName, clsName,
         String.join(",", propNames)));
     switch (indexType) {
@@ -77,6 +82,7 @@ public class OrientSchemaApi implements SchemaApi {
         sb.append("unique");
         break;
       case DEFAULT:
+        sb.append("notunique");
         break;
     }
     managementApi.runScript(sb.toString());

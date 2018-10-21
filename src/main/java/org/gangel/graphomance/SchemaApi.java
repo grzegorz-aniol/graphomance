@@ -2,6 +2,8 @@ package org.gangel.graphomance;
 
 public interface SchemaApi {
 
+  boolean classExists(final String clsName);
+
   void createClass(final String clsName);
 
   void dropClass(final String clsName);

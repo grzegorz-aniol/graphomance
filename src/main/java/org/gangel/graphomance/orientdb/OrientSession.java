@@ -29,17 +29,14 @@ public class OrientSession implements Session, ManagementApi {
     }
 
     @Override
-    public void open() {
-    }
-
-    @Override
     public void close() {
-        session.close();
-        session = null;
+        if (session != null) {
+            session.close();
+            session = null;
+        }
         this.schemaApi = null;
         this.objectApi = null;
     }
-
 
     public void runScript(String script) {
         try(OResultSet rs = session.execute("sql", script)) {
