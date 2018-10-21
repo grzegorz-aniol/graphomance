@@ -5,8 +5,11 @@ import com.codahale.metrics.SharedMetricRegistries;
 import org.apache.commons.lang3.time.StopWatch;
 import org.gangel.graphomance.Connection;
 import org.gangel.graphomance.ConnectionProducer;
+import org.gangel.graphomance.ConnectionSettings;
 import org.gangel.graphomance.SessionProducer;
 import org.gangel.graphomance.metrics.Metrics;
+import org.gangel.graphomance.neo4j.NeoConnectionProducer;
+import org.gangel.graphomance.neo4j.NeoConnectionSettings;
 import org.gangel.graphomance.orientdb.OrientConnectionProducer;
 import org.gangel.graphomance.orientdb.OrientConnectionSettings;
 import org.gangel.graphomance.orientdb.OrientSessionProducer;
@@ -21,18 +24,32 @@ public class TestLauncher {
 
         Metrics.init();
 
-        ConnectionProducer connProducer = new OrientConnectionProducer();
-        OrientConnectionSettings connSetup = OrientConnectionSettings.builder()
-                .dbName("perf")
+        Connection connection;
+        SessionProducer sessionProducer;
+
+        if (System.getProperty("neo4j") != null) {
+            NeoConnectionProducer connProducer = new NeoConnectionProducer();
+            NeoConnectionSettings connSetup = NeoConnectionSettings.builder()
+                    .dbPath("D:/dev/orientdb-3.0.9/databases")
+                    .build();
+            connection = connProducer.connect(connSetup);
+            sessionProducer = connProducer;
+
+        } else {
+            ConnectionProducer connProducer = new OrientConnectionProducer();
+            OrientConnectionSettings connSetup = OrientConnectionSettings.builder()
+                    .dbName("perf")
 //                .mode("remote")
 //                .dbPath("localhost/DB")
-                .mode("plocal")
-                .dbPath("D:/dev/orientdb-3.0.9/databases")
-                .dbUser("admin").dbPassword("admin")
-                .dbAdminUser("root").dbAdminPassword("admin")
-                .build();
-        Connection connection = connProducer.connect(connSetup);
-        SessionProducer sessionProducer = OrientSessionProducer.builder().opts(connSetup).build();
+                    .mode("plocal")
+                    .dbPath("D:/dev/orientdb-3.0.9/databases")
+                    .dbUser("admin").dbPassword("admin")
+                    .dbAdminUser("root").dbAdminPassword("admin")
+                    .build();
+            connection = connProducer.connect(connSetup);
+            sessionProducer = OrientSessionProducer.builder().opts(connSetup).build();
+        }
+
 
         ConsoleReporter reporter = ConsoleReporter.forRegistry(SharedMetricRegistries.getDefault())
                 .convertRatesTo(TimeUnit.SECONDS)
@@ -41,16 +58,16 @@ public class TestLauncher {
         //reporter.start(10, TimeUnit.SECONDS);
 
         List<TestBase> allTests = List.of(
-                new CreateSingleVertex(),
-                new CreateSingleVertexLongIndex(),
-                new CreateSingleVertexStringIndex(),
-                new CreateSingleVertexLongUniqueIndex(),
-                new CreateSingleVertexStringUniqueIndex(),
-                new CreateSingleVertexCompoundIndex(),
-                new CreateSingleVertexCompoundUniqueIndex(),
-                new CreateSingleVertexCompoundUniqueHashIndex(),
-                new CreateSingleVertexStringUniqueIndex(),
-                new CreateSingleVertexLongUniqueIndex()
+                new CreateSingleVertex()
+//                new CreateSingleVertexLongIndex(),
+//                new CreateSingleVertexStringIndex(),
+//                new CreateSingleVertexLongUniqueIndex(),
+//                new CreateSingleVertexStringUniqueIndex(),
+//                new CreateSingleVertexCompoundIndex(),
+//                new CreateSingleVertexCompoundUniqueIndex(),
+//                new CreateSingleVertexCompoundUniqueHashIndex(),
+//                new CreateSingleVertexStringUniqueIndex(),
+//                new CreateSingleVertexLongUniqueIndex()
         );
 
         allTests.forEach((test)-> {
