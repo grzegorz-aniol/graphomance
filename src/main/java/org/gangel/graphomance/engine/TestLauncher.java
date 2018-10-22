@@ -1,7 +1,9 @@
 package org.gangel.graphomance.engine;
 
 import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.CsvReporter;
 import com.codahale.metrics.SharedMetricRegistries;
+import org.apache.commons.cli.*;
 import org.apache.commons.lang3.time.StopWatch;
 import org.gangel.graphomance.Connection;
 import org.gangel.graphomance.ConnectionProducer;
@@ -15,59 +17,95 @@ import org.gangel.graphomance.orientdb.OrientConnectionSettings;
 import org.gangel.graphomance.orientdb.OrientSessionProducer;
 import org.gangel.graphomance.usecases.*;
 
+import java.io.File;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class TestLauncher {
 
+    public static final String PARAM_DB = "db";
+    public static final String DB_NEO4J = "neo4j";
+    public static final String DB_ORIENT = "orientdb";
+
     public static void main(String args[]) {
+
+        Options opts = new Options();
+        opts.addOption(Option.builder("t").longOpt("type").required().hasArg().build());
+        opts.addOption(Option.builder("u").longOpt("dburl").required().hasArg().build());
+        opts.addOption(Option.builder("n").longOpt("dbname").required(false).hasArg().build());
+        CommandLineParser parser = new DefaultParser();
+        CommandLine line;
+        try {
+            line = parser.parse(opts, args);
+        } catch (ParseException e) {
+            System.err.println(e.getMessage());
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("Graphomance", opts);
+            return;
+        }
 
         Metrics.init();
 
         Connection connection;
         SessionProducer sessionProducer;
 
-        if (System.getProperty("neo4j") != null) {
+        String dbUrlOrPath = line.getOptionValue("u");
+        String dbName = line.getOptionValue("n");
+        String dbKind = line.getOptionValue("t");
+
+        if (DB_NEO4J.equals(dbKind)) {
             NeoConnectionProducer connProducer = new NeoConnectionProducer();
             NeoConnectionSettings connSetup = NeoConnectionSettings.builder()
-                    .dbPath("D:/dev/orientdb-3.0.9/databases")
+                    .dbPath(dbUrlOrPath)
                     .build();
             connection = connProducer.connect(connSetup);
             sessionProducer = connProducer;
 
-        } else {
+        } else if (DB_ORIENT.equals(dbKind)){
+            Objects.requireNonNull(dbName, "Database name for OrientDB is required");
+
             ConnectionProducer connProducer = new OrientConnectionProducer();
             OrientConnectionSettings connSetup = OrientConnectionSettings.builder()
-                    .dbName("perf")
+                    .dbName(dbName)
 //                .mode("remote")
-//                .dbPath("localhost/DB")
                     .mode("plocal")
-                    .dbPath("D:/dev/orientdb-3.0.9/databases")
+                    .dbPath(dbUrlOrPath)
                     .dbUser("admin").dbPassword("admin")
                     .dbAdminUser("root").dbAdminPassword("admin")
                     .build();
             connection = connProducer.connect(connSetup);
             sessionProducer = OrientSessionProducer.builder().opts(connSetup).build();
+        } else {
+            System.err.println("Unknown database type");
+            return;
         }
 
 
+        CsvReporter csvReporter = CsvReporter.forRegistry(SharedMetricRegistries.getDefault())
+            .convertRatesTo(TimeUnit.SECONDS)
+            .convertDurationsTo(TimeUnit.MICROSECONDS)
+            .formatFor(Locale.US)
+            .build(new File("."));
+
         ConsoleReporter reporter = ConsoleReporter.forRegistry(SharedMetricRegistries.getDefault())
-                .convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MICROSECONDS)
-                .build();
+            .convertRatesTo(TimeUnit.SECONDS)
+            .convertDurationsTo(TimeUnit.MICROSECONDS)
+            .build();
         //reporter.start(10, TimeUnit.SECONDS);
 
         List<TestBase> allTests = List.of(
-                new CreateSingleVertex()
-//                new CreateSingleVertexLongIndex(),
-//                new CreateSingleVertexStringIndex(),
-//                new CreateSingleVertexLongUniqueIndex(),
-//                new CreateSingleVertexStringUniqueIndex(),
-//                new CreateSingleVertexCompoundIndex(),
-//                new CreateSingleVertexCompoundUniqueIndex(),
-//                new CreateSingleVertexCompoundUniqueHashIndex(),
-//                new CreateSingleVertexStringUniqueIndex(),
-//                new CreateSingleVertexLongUniqueIndex()
+            new CreateSingleVertex(),
+            new CreateSingleVertexStringIndex(),
+            new CreateSingleVertexStringUniqueIndex(),
+            new CreateSingleVertexStringUniqueHashIndex(),
+            new CreateSingleVertexLongIndex(),
+            new CreateSingleVertexLongUniqueIndex(),
+            new CreateSingleVertexLongUniqueHashIndex(),
+            new CreateSingleVertexCompoundIndex(),
+            new CreateSingleVertexCompoundUniqueIndex(),
+            new CreateSingleVertexCompoundUniqueHashIndex()
         );
 
         allTests.forEach((test)-> {
@@ -80,6 +118,7 @@ public class TestLauncher {
         });
 
         reporter.report();
+        csvReporter.report();
     }
 
     public static void runTest(TestBase test) {
