@@ -14,4 +14,19 @@ public interface TestCase {
 
     void terminate();
 
+    DbType[] skipFor();
+
+    default boolean skipFor(DbType dbType) {
+        DbType[] skipForTypes = skipFor();
+        if (skipForTypes == null) {
+            return false;
+        }
+        for(DbType t : skipForTypes) {
+            if (t == dbType) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

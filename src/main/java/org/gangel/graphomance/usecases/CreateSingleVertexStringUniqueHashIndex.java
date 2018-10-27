@@ -1,5 +1,6 @@
 package org.gangel.graphomance.usecases;
 
+import org.gangel.graphomance.DbType;
 import org.gangel.graphomance.IndexType;
 
 public class CreateSingleVertexStringUniqueHashIndex extends CreateSingleVertexBase {
@@ -7,5 +8,9 @@ public class CreateSingleVertexStringUniqueHashIndex extends CreateSingleVertexB
     public CreateSingleVertexStringUniqueHashIndex() {
         super("Create vertex with string unique hash index", IndexType.HASH_UNIQUE, false, true);
     }
-    
+
+    @Override
+    public boolean skipFor(DbType dbType) {
+        return (dbType == DbType.NEO4J);
+    }
 }

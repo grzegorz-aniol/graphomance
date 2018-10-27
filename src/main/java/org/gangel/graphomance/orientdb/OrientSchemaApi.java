@@ -1,12 +1,16 @@
 package org.gangel.graphomance.orientdb;
 
 import com.orientechnologies.orient.core.db.ODatabaseSession;
+import com.orientechnologies.orient.core.index.OIndex;
+import com.orientechnologies.orient.core.metadata.schema.OClass;
 import org.gangel.graphomance.IndexType;
 import org.gangel.graphomance.ManagementApi;
 import org.gangel.graphomance.SchemaApi;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class OrientSchemaApi implements SchemaApi {
 
@@ -36,6 +40,13 @@ public class OrientSchemaApi implements SchemaApi {
       throw new RuntimeException(String.format("Can't map java type '%s' into Orient types", cls.getSimpleName()));
     }
     return str;
+  }
+
+  @Override
+  public long countObjects(String clsName) {
+    return Optional.ofNullable(session.getClass(clsName))
+        .map(OClass::count)
+        .orElse(0L);
   }
 
   @Override
@@ -86,5 +97,16 @@ public class OrientSchemaApi implements SchemaApi {
         break;
     }
     managementApi.runScript(sb.toString());
+  }
+
+  @Override
+  public void dropAllIndexesOnClass(String clsName) {
+    Set<OIndex<?>> allIndexes = Optional.ofNullable(session.getClass(clsName)).map(OClass::getIndexes).orElse(null);
+    if (allIndexes == null) {
+      return;
+    }
+    for(OIndex idx : allIndexes) {
+      idx.delete();
+    }
   }
 }

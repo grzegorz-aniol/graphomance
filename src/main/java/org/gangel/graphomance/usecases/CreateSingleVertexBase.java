@@ -30,6 +30,7 @@ public abstract class CreateSingleVertexBase extends TestBase {
         if (session.schemaApi().classExists(USER_CLASS)) {
             session.objectApi().deleteAllNodes(USER_CLASS);
         }
+        session.schemaApi().dropAllIndexesOnClass(USER_CLASS);
 
         session.schemaApi().createClass(USER_CLASS);
         session.schemaApi().createProperty(USER_CLASS, "login", String.class, true);
@@ -73,11 +74,14 @@ public abstract class CreateSingleVertexBase extends TestBase {
             limit.increment();
         }
 
-        System.out.printf("End of operations. # of iterations: %d\n", cnt);
+        long cntObjects = session.schemaApi().countObjects(USER_CLASS);
+
+        System.out.printf("End of operations. Iterations: %d, objects: %d\n", cnt, cntObjects);
     }
 
     @Override
     public void cleanUpAfter() {
+        session.schemaApi().dropAllIndexesOnClass(USER_CLASS);
         session.objectApi().deleteAllNodes(USER_CLASS);
         session.schemaApi().dropClass(USER_CLASS);
     }

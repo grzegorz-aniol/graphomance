@@ -45,11 +45,11 @@ public class NeoObjectApi implements ObjectApi {
 
     @Override
     public NodeIdentifier createNode(String clsName, Map<String, Object> properties) {
-        try(Result rs = dbService.execute(String.format("create (n:%s $map) return ID(n)", clsName), Map.of("map", properties))) {
+        try(Result rs = dbService.execute(String.format("create (n:%s $map) return ID(n) as ident", clsName), Map.of("map", properties))) {
             if (!rs.hasNext()) {
                 throw new RuntimeException("Can't read ID of created node");
             }
-            Long id = (Long)rs.next().get(0);
+            Long id = (Long)rs.next().get("ident");
             return NeoIdentifier.builder().id(id).build();
         }
     }
@@ -61,7 +61,7 @@ public class NeoObjectApi implements ObjectApi {
             if (!rs.hasNext()) {
                 throw new RuntimeException("Can't read ID of created edge");
             }
-            Long id = (Long) rs.next().get(0);
+            Long id = (Long) rs.next().get("ID(r)");
             return NeoIdentifier.builder().id(id).build();
         }
     }

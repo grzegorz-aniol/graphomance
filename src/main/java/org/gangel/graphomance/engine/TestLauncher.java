@@ -7,6 +7,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.lang3.time.StopWatch;
 import org.gangel.graphomance.Connection;
 import org.gangel.graphomance.ConnectionProducer;
+import org.gangel.graphomance.DbType;
 import org.gangel.graphomance.SessionProducer;
 import org.gangel.graphomance.metrics.Metrics;
 import org.gangel.graphomance.neo4j.NeoConnectionProducer;
@@ -24,9 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TestLauncher {
 
-    public static final String PARAM_DB = "db";
-    public static final String DB_NEO4J = "neo4j";
-    public static final String DB_ORIENT = "orientdb";
+    final static String BREAKE_LINE = "\n-------------------------------------------------------------------\n";
 
     public static void main(String args[]) {
 
@@ -54,7 +53,13 @@ public class TestLauncher {
         String dbName = line.getOptionValue("n");
         String dbKind = line.getOptionValue("t");
 
-        if (DB_NEO4J.equals(dbKind)) {
+        DbType dbType = DbType.of(dbKind);
+        if (dbType == null) {
+            System.err.println("Unknown database type");
+            return;
+        }
+
+        if (dbType == DbType.NEO4J) {
             NeoConnectionProducer connProducer = new NeoConnectionProducer();
             NeoConnectionSettings connSetup = NeoConnectionSettings.builder()
                     .dbPath(dbUrlOrPath)
@@ -62,9 +67,8 @@ public class TestLauncher {
             connection = connProducer.connect(connSetup);
             sessionProducer = connProducer;
 
-        } else if (DB_ORIENT.equals(dbKind)){
+        } else if (dbType == DbType.ORIENTDB){
             Objects.requireNonNull(dbName, "Database name for OrientDB is required");
-
             ConnectionProducer connProducer = new OrientConnectionProducer();
             OrientConnectionSettings connSetup = OrientConnectionSettings.builder()
                     .dbName(dbName)
@@ -77,10 +81,9 @@ public class TestLauncher {
             connection = connProducer.connect(connSetup);
             sessionProducer = OrientSessionProducer.builder().opts(connSetup).build();
         } else {
-            System.err.println("Unknown database type");
+            System.err.println("Unsupported database type");
             return;
         }
-
 
         CsvReporter csvReporter = CsvReporter.forRegistry(SharedMetricRegistries.getDefault())
             .convertRatesTo(TimeUnit.SECONDS)
@@ -107,12 +110,19 @@ public class TestLauncher {
             new CreateSingleVertexCompoundUniqueHashIndex()
         );
 
+        System.out.printf("Starting with database: %s\n", dbType.toString());
+
         allTests.forEach((test)-> {
-            try {
-                test.initialize(connection, sessionProducer);
-                runTest(test);
-            } finally {
-                test.terminate();
+            System.out.printf(BREAKE_LINE);
+            if (test.skipFor(dbType)) {
+                System.out.printf("Skipping test '%s'\n", test.getClass().getSimpleName());
+            } else {
+                try {
+                    test.initialize(connection, sessionProducer);
+                    runTest(test);
+                } finally {
+                    test.terminate();
+                }
             }
         });
 

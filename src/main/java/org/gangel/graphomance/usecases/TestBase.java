@@ -1,14 +1,6 @@
 package org.gangel.graphomance.usecases;
 
-import com.codahale.metrics.ConsoleReporter;
-import com.codahale.metrics.SharedMetricRegistries;
-import org.gangel.graphomance.Connection;
-import org.gangel.graphomance.Session;
-import org.gangel.graphomance.SessionProducer;
-import org.gangel.graphomance.TestCase;
-import org.gangel.graphomance.metrics.Metrics;
-
-import java.util.concurrent.TimeUnit;
+import org.gangel.graphomance.*;
 
 public abstract class TestBase implements TestCase {
 
@@ -30,4 +22,8 @@ public abstract class TestBase implements TestCase {
         this.session.close();
     }
 
+    @Override
+    public DbType[] skipFor() {
+        return null;
+    }
 }
