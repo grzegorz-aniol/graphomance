@@ -15,7 +15,10 @@ public abstract class CreateSingleVertexBase extends TestBase {
     protected final IndexType indexType;
     protected final boolean isIndexLong;
     protected final boolean isIndexString;
-    final static String USER_CLASS = "UserNode";
+    private final static String USER_CLASS = "UserNode";
+    private final long MIN_ITERATIONS = 1_000;
+    private final Duration MIN_TEST_TIME = Duration.ofSeconds(5);
+    private final Duration MAX_TEST_TIME = Duration.ofSeconds(30);
 
 
     protected CreateSingleVertexBase(String timerName, IndexType indexType, boolean indexLong, boolean indexString) {
@@ -56,7 +59,7 @@ public abstract class CreateSingleVertexBase extends TestBase {
 
     @Override
     public void performTest() {
-        TestLimit limit = new TestLimit(1_000, Duration.ofSeconds(5), Duration.ofSeconds(30) );
+        TestLimit limit = new TestLimit(MIN_ITERATIONS, MIN_TEST_TIME, MAX_TEST_TIME);
 
         Timer timerMetric = new Timer();
         SharedMetricRegistries.getDefault().register(timerName, timerMetric);
