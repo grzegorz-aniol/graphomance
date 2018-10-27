@@ -2,6 +2,7 @@ package org.gangel.graphomance.engine;
 
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.CsvReporter;
+import com.codahale.metrics.MetricAttribute;
 import com.codahale.metrics.SharedMetricRegistries;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.time.StopWatch;
@@ -21,7 +22,10 @@ import java.io.File;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import static com.codahale.metrics.MetricAttribute.*;
 
 public class TestLauncher {
 
@@ -92,10 +96,11 @@ public class TestLauncher {
             .build(new File("."));
 
         ConsoleReporter reporter = ConsoleReporter.forRegistry(SharedMetricRegistries.getDefault())
+                .formattedFor(Locale.US)
+                .disabledMetricAttributes(Set.of(STDDEV,P50,P75,P95,P98,P999,M1_RATE,M5_RATE, M15_RATE))
             .convertRatesTo(TimeUnit.SECONDS)
             .convertDurationsTo(TimeUnit.MICROSECONDS)
             .build();
-        //reporter.start(10, TimeUnit.SECONDS);
 
         List<TestBase> allTests = List.of(
             new CreateSingleVertex(),
