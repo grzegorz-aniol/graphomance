@@ -7,7 +7,6 @@ import org.apache.commons.cli.*;
 import org.apache.commons.lang3.time.StopWatch;
 import org.gangel.graphomance.Connection;
 import org.gangel.graphomance.ConnectionProducer;
-import org.gangel.graphomance.ConnectionSettings;
 import org.gangel.graphomance.SessionProducer;
 import org.gangel.graphomance.metrics.Metrics;
 import org.gangel.graphomance.neo4j.NeoConnectionProducer;
@@ -138,6 +137,7 @@ public class TestLauncher {
 
         } catch (Throwable e) {
             System.out.println("Test error: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

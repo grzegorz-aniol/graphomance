@@ -17,3 +17,5 @@ Usecases to implement:
 
 * update node (modify properties, not included in any index)
 * update edge (modify properties, not included in any index)
+
+*

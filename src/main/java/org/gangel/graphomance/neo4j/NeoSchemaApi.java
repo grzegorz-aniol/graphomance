@@ -4,6 +4,7 @@ import org.gangel.graphomance.IndexType;
 import org.gangel.graphomance.SchemaApi;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.schema.ConstraintCreator;
 import org.neo4j.graphdb.schema.IndexCreator;
@@ -24,7 +25,13 @@ class NeoSchemaApi implements SchemaApi {
 
     @Override
     public boolean classExists(String clsName) {
-        return false;
+        try(Result rs = dbService.execute(String.format("match (:%s) return count(*)", clsName))) {
+            if (!rs.hasNext()) {
+                throw new RuntimeException("Can't read number of nodes with the label");
+            }
+            Long id = (Long)rs.next().get(0);
+            return (id != 0);
+        }
     }
 
     @Override

@@ -56,7 +56,14 @@ public class NeoObjectApi implements ObjectApi {
 
     @Override
     public RelationIdentifier createRelation(String className, NodeIdentifier fromNode, NodeIdentifier toNode, Map<String, Object> properties) {
-        return null;
+        try(Result rs = dbService.execute(String.format("match (a), (b) where ID(a)=$fromNode AND ID(b)=$toNode create (a)-[r:%s]->(b) RETURN ID(r)", className),
+                Map.of("fromNode", fromNode, "toNode", toNode))) {
+            if (!rs.hasNext()) {
+                throw new RuntimeException("Can't read ID of created edge");
+            }
+            Long id = (Long) rs.next().get(0);
+            return NeoIdentifier.builder().id(id).build();
+        }
     }
 
     @Override
