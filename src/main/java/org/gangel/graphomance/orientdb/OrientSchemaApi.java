@@ -60,6 +60,22 @@ public class OrientSchemaApi implements SchemaApi {
   }
 
   @Override
+  public void createClass(final String clsName, final String extendsClass) {
+    managementApi.runScript(String.format("create class %s if not exists extends %s;", clsName, extendsClass));
+  }
+
+  @Override
+  public void createNodeClass(final String clsName) {
+    createClass(clsName, "V");
+  }
+
+  @Override
+  public void createRelationClass(final String clsName) {
+    createClass(clsName, "E");
+  }
+
+
+  @Override
   public void dropClass(String clsName) {
     managementApi.runScript(String.format("drop class %s;", clsName));
   }

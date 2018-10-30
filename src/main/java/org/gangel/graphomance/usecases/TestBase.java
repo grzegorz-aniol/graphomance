@@ -10,11 +10,17 @@ public abstract class TestBase implements TestCase {
 
     protected Session session;
 
+    protected ObjectApi objectApi;
+    protected SchemaApi schemaApi;
+
+
     @Override
     public void initialize(Connection conn, SessionProducer sessionProducer) {
         this.conn = conn;
         this.sessionProducer = sessionProducer;
         this.session = sessionProducer.createSession(conn);
+        objectApi = session.objectApi();
+        schemaApi = session.schemaApi();
     }
 
     @Override

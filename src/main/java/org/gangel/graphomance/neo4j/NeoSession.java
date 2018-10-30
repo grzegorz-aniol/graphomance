@@ -7,7 +7,7 @@ import org.gangel.graphomance.SchemaApi;
 import org.gangel.graphomance.Session;
 import org.neo4j.graphdb.GraphDatabaseService;
 
-class NeoSession implements Session {
+class NeoSession implements Session, ManagementApi {
 
     @Getter
     private NeoConnection connection;
@@ -43,6 +43,17 @@ class NeoSession implements Session {
 
     @Override
     public ManagementApi managementApi() {
-        return null;
+        return this;
+    }
+
+    @Override
+    public void runScript(String script) {
+        throw new RuntimeException("Not supported!");
+    }
+
+    @Override
+    public void runScriptFromResource(String resourcePath) {
+        throw new RuntimeException("Not supported!");
+
     }
 }

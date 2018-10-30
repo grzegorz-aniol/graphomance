@@ -2,7 +2,6 @@ package org.gangel.graphomance.engine;
 
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.CsvReporter;
-import com.codahale.metrics.MetricAttribute;
 import com.codahale.metrics.SharedMetricRegistries;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.time.StopWatch;
@@ -17,6 +16,8 @@ import org.gangel.graphomance.orientdb.OrientConnectionProducer;
 import org.gangel.graphomance.orientdb.OrientConnectionSettings;
 import org.gangel.graphomance.orientdb.OrientSessionProducer;
 import org.gangel.graphomance.usecases.*;
+import org.gangel.graphomance.usecases.node.*;
+import org.gangel.graphomance.usecases.relation.CreateRelationsInFlatStructure;
 
 import java.io.File;
 import java.util.List;
@@ -103,16 +104,17 @@ public class TestLauncher {
             .build();
 
         List<TestBase> allTests = List.of(
-            new CreateSingleVertex(),
-            new CreateSingleVertexStringIndex(),
-            new CreateSingleVertexStringUniqueIndex(),
-            new CreateSingleVertexStringUniqueHashIndex(),
-            new CreateSingleVertexLongIndex(),
-            new CreateSingleVertexLongUniqueIndex(),
-            new CreateSingleVertexLongUniqueHashIndex(),
-            new CreateSingleVertexCompoundIndex(),
-            new CreateSingleVertexCompoundUniqueIndex(),
-            new CreateSingleVertexCompoundUniqueHashIndex()
+//            new CreateSingleVertex(),
+//            new CreateSingleVertexStringIndex(),
+//            new CreateSingleVertexStringUniqueIndex(),
+//            new CreateSingleVertexStringUniqueHashIndex(),
+//            new CreateSingleVertexLongIndex(),
+//            new CreateSingleVertexLongUniqueIndex(),
+//            new CreateSingleVertexLongUniqueHashIndex(),
+//            new CreateSingleVertexCompoundIndex(),
+//            new CreateSingleVertexCompoundUniqueIndex(),
+//            new CreateSingleVertexCompoundUniqueHashIndex(),
+            new CreateRelationsInFlatStructure()
         );
 
         System.out.printf("Starting with database: %s\n", dbType.toString());

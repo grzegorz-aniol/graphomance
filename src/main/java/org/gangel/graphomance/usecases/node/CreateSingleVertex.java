@@ -1,9 +1,9 @@
-package org.gangel.graphomance.usecases;
+package org.gangel.graphomance.usecases.node;
 
 public class CreateSingleVertex extends CreateSingleVertexBase {
 
     public CreateSingleVertex() {
-        super("Create vertex", null, false, false);
+        super("Create node", null, false, false);
     }
 
 }

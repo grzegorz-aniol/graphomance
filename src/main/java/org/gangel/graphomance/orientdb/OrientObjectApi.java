@@ -49,7 +49,7 @@ public class OrientObjectApi implements ObjectApi {
     Metrics.CREATED_VERTICES_METER.mark();
     return NodeId.build(id);
         /*
-        try (OResultSet command = session.command(String.format("create vertex %s", className))) {
+        try (OResultSet command = session.command(String.format("create node %s", className))) {
             OResult res = Objects.requireNonNull(command.next());
             return NodeId.build(res.getIdentity().get());
         }
@@ -69,7 +69,7 @@ public class OrientObjectApi implements ObjectApi {
 
   @Override
   public void deleteAllNodes(String clsName) {
-    try (OResultSet command = session.command(String.format("delete vertex from %s", clsName) )) {
+    try (OResultSet command = session.command(String.format("delete node from %s", clsName) )) {
     }
   }
 

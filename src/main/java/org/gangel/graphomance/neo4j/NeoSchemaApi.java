@@ -47,6 +47,22 @@ class NeoSchemaApi implements SchemaApi {
     }
 
     @Override
+    public void createClass(final String clsName, final String extendsClass) {
+        // no schema in neo4j
+    }
+
+    @Override
+    public void createNodeClass(final String clsName) {
+        // no schema in neo4j
+    }
+
+    @Override
+    public void createRelationClass(final String clsName) {
+        // no schema in neo4j
+    }
+
+
+    @Override
     public void dropClass(String clsName) {
         // no schema in neo4j
     }

@@ -10,7 +10,10 @@ Usecases to implement:
 * read node by internal ID
 * read node by unique long identifier (with default index)
 * read node by unique string identifier (with hash index)
+* read nodes by value range (using indexed property)
+
 * read edge by internal ID
+* read edge between two nodes
 
 * upsert for node (with default index type)
 * upsert for edge (with default index type)
