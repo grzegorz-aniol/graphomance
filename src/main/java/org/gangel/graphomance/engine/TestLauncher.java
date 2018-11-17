@@ -18,6 +18,7 @@ import org.gangel.graphomance.orientdb.OrientSessionProducer;
 import org.gangel.graphomance.usecases.*;
 import org.gangel.graphomance.usecases.node.*;
 import org.gangel.graphomance.usecases.relation.CreateRelationsInFlatStructure;
+import org.gangel.graphomance.usecases.relation.CreateRelationsInStarStructure;
 
 import java.io.File;
 import java.util.List;
@@ -114,7 +115,8 @@ public class TestLauncher {
 //            new CreateSingleVertexCompoundIndex(),
 //            new CreateSingleVertexCompoundUniqueIndex(),
 //            new CreateSingleVertexCompoundUniqueHashIndex(),
-            new CreateRelationsInFlatStructure()
+//            new CreateRelationsInFlatStructure(),
+            new CreateRelationsInStarStructure()
         );
 
         System.out.printf("Starting with database: %s\n", dbType.toString());
@@ -141,7 +143,8 @@ public class TestLauncher {
         try {
             System.out.printf("Setup test: %s \n", test.getClass().getSimpleName());
             test.setUpTest();
-
+            System.out.printf("Test data generation...\n");
+            test.createTestData();
             System.out.println("Starting test...");
             StopWatch timer = StopWatch.createStarted();
             test.performTest();

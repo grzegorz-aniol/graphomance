@@ -77,6 +77,9 @@ public class OrientSchemaApi implements SchemaApi {
 
   @Override
   public void dropClass(String clsName) {
+    if (session.getClass(clsName) == null) {
+      return;
+    }
     managementApi.runScript(String.format("drop class %s;", clsName));
   }
 

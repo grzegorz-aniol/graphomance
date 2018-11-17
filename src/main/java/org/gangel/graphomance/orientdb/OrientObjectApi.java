@@ -59,7 +59,9 @@ public class OrientObjectApi implements ObjectApi {
   @Override
   public RelationIdentifier createRelation(String className, NodeIdentifier fromNode, NodeIdentifier toNode,
                                            Map<String, Object> properties) {
-    try (OResultSet command = session.command(String.format("create edge %s", className))) {
+    try (OResultSet command = session.command(String.format("create edge %s from :f to :t", className),
+          Map.of("f", NodeId.getORID(fromNode),
+        "t", NodeId.getORID(toNode)))) {
       OResult res = Objects.requireNonNull(command.next(), "Can't read new relation ID");
       Metrics.CREATED_RELATION_METER.mark();
       return EdgeId.build(res.getIdentity().get());
@@ -69,13 +71,19 @@ public class OrientObjectApi implements ObjectApi {
 
   @Override
   public void deleteAllNodes(String clsName) {
-    try (OResultSet command = session.command(String.format("delete node from %s", clsName) )) {
+    if (session.getClass(clsName) == null) {
+      return;
+    }
+    try (OResultSet command = session.command(String.format("delete vertex %s", clsName) )) {
     }
   }
 
   @Override
   public void deleteAllRelations(String clsName) {
-    try (OResultSet command = session.command(String.format("delete edge from %s", clsName) )) {
+    if (session.getClass(clsName) == null) {
+      return;
+    }
+    try (OResultSet command = session.command(String.format("delete edge %s", clsName) )) {
     }
   }
 
