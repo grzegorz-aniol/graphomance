@@ -13,8 +13,8 @@ public abstract class CreateSingleEdgeBase extends TestBase {
   protected final String CITY_CLASS = "City";
   protected final String ROADTO_CLASS = "RoadTo";
   protected final String NAME_PROP = "name";
-  protected  final String SIZE_PROP = "size";
-  protected  final List<NodeIdentifier> nodesId = new LinkedList<>();
+  protected final String SIZE_PROP = "size";
+  protected final List<NodeIdentifier> nodesId = new LinkedList<>();
 
   protected CreateSingleEdgeBase(final long numOfNodes) {
     this.numOfNodes = numOfNodes;
@@ -57,4 +57,5 @@ public abstract class CreateSingleEdgeBase extends TestBase {
     schemaApi.dropClass(CITY_CLASS);
     schemaApi.dropClass(ROADTO_CLASS);
   }
+
 }

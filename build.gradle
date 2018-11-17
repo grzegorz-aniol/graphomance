@@ -9,6 +9,7 @@ sourceCompatibility = 10
 
 ext {
     orientDbVersion = '3.0.9'
+    arangoDbVersion = '4.2.2'
 }
 
 repositories {
@@ -26,6 +27,8 @@ dependencies {
     compile group: 'com.orientechnologies', name: 'orientdb-client', version: orientDbVersion
 
     compile group: 'org.neo4j', name: 'neo4j', version: '3.4.9'
+
+    compile group: 'com.arangodb', name: 'arangodb-java-driver', version: arangoDbVersion
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
