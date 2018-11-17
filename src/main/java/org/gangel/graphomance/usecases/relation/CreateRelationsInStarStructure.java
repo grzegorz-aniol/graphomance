@@ -9,12 +9,12 @@ import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CreateRelationsInFlatStructure extends CreateSingleEdgeBase {
+public class CreateRelationsInStarStructure extends CreateSingleEdgeBase {
 
-  private static final int SQUARE_SIZE = 100;
-  private static final int WARM_UP = 10;
+  private static final int SQUARE_SIZE = 500;
+  private static final int WARM_UP = 100;
 
-  public CreateRelationsInFlatStructure() {
+  public CreateRelationsInStarStructure() {
     super(SQUARE_SIZE * SQUARE_SIZE);
   }
 
@@ -24,29 +24,24 @@ public class CreateRelationsInFlatStructure extends CreateSingleEdgeBase {
     SharedMetricRegistries.getDefault().register(this.getClass().getSimpleName(), timerMetric);
 
     int row = 0;
-    int column = 0;
+    int column = 1; // skip "big node" of the star which is at location (0,0)
     long count = 0;
-    NodeIdentifier[] nodes = new NodeIdentifier[4];
-    TestLimit limit = new TestLimit(numOfNodes, Duration.ofSeconds(10), Duration.ofMinutes(10));
+    TestLimit limit = new TestLimit(numOfNodes - 1, Duration.ofSeconds(10), Duration.ofMinutes(10));
+
+    // Id of big node
+    NodeIdentifier parentNodeId = getNode(0, 0);
 
     while (!limit.isDone()) {
       limit.increment();
 
       NodeIdentifier sourceId = getNode(row, column);
 
-      nodes[0] = getNode(row, next(column) );
-      nodes[1] = getNode(row, prev(column) );
-      nodes[2] = getNode(next(row), column );
-      nodes[3] = getNode(prev(row), column );
-
-      for (NodeIdentifier nodeId : nodes) {
-        Timer.Context ts = (++count > WARM_UP ? timerMetric.time() : null);
-        try {
-          objectApi.createRelation(ROADTO_CLASS, sourceId, nodeId);
-        } finally {
-          if (ts != null) {
-            ts.close();
-          }
+      Timer.Context ts = (++count > WARM_UP ? timerMetric.time() : null);
+      try {
+        objectApi.createRelation(ROADTO_CLASS, sourceId, parentNodeId);
+      } finally {
+        if (ts != null) {
+          ts.close();
         }
       }
 

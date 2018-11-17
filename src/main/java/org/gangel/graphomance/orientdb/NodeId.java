@@ -24,4 +24,11 @@ class NodeId implements NodeIdentifier {
     public static final NodeId build(ORID orid) {
         return new NodeId(orid);
     }
+
+    public static  final ORID getORID(final NodeIdentifier idObject) {
+        if (!(idObject instanceof NodeId)) {
+            throw new RuntimeException("Wrong implementation of identifier");
+        }
+        return ((NodeId)idObject).id;
+    }
 }
