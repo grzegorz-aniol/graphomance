@@ -14,6 +14,9 @@ public class ArangoSession implements Session {
     @Getter
     private ArangoDatabase db;
 
+    @Getter
+    private ArangoConnectionSettings connectionSettings;
+
     @Override
     public void close() {
     }

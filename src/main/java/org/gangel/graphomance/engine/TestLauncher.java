@@ -9,14 +9,18 @@ import org.gangel.graphomance.Connection;
 import org.gangel.graphomance.ConnectionProducer;
 import org.gangel.graphomance.DbType;
 import org.gangel.graphomance.SessionProducer;
+import org.gangel.graphomance.arangodb.ArangoConnectionProducer;
+import org.gangel.graphomance.arangodb.ArangoConnectionSettings;
+import org.gangel.graphomance.arangodb.ArangoSessionProducer;
 import org.gangel.graphomance.metrics.Metrics;
 import org.gangel.graphomance.neo4j.NeoConnectionProducer;
 import org.gangel.graphomance.neo4j.NeoConnectionSettings;
 import org.gangel.graphomance.orientdb.OrientConnectionProducer;
 import org.gangel.graphomance.orientdb.OrientConnectionSettings;
 import org.gangel.graphomance.orientdb.OrientSessionProducer;
-import org.gangel.graphomance.usecases.*;
-import org.gangel.graphomance.usecases.node.*;
+import org.gangel.graphomance.usecases.CreateBasicRelationTest;
+import org.gangel.graphomance.usecases.TestBase;
+import org.gangel.graphomance.usecases.node.CreateSingleVertex;
 import org.gangel.graphomance.usecases.relation.CreateRelationsInFlatStructure;
 import org.gangel.graphomance.usecases.relation.CreateRelationsInStarStructure;
 
@@ -86,7 +90,19 @@ public class TestLauncher {
                     .build();
             connection = connProducer.connect(connSetup);
             sessionProducer = OrientSessionProducer.builder().opts(connSetup).build();
-        } else {
+
+        } else if (dbType == DbType.ARANGODB) {
+            Objects.requireNonNull(dbName, "Database name for ArangoDB is required!");
+            ConnectionProducer connProducer = new ArangoConnectionProducer();
+            ArangoConnectionSettings connSettings = ArangoConnectionSettings.builder()
+                    .dbName(dbName)
+                    .user("root")
+                    .password("admin")
+                    .build();
+            connection = connProducer.connect(connSettings);
+            sessionProducer = ArangoSessionProducer.builder().build();
+
+        } else  {
             System.err.println("Unsupported database type");
             return;
         }
@@ -105,7 +121,7 @@ public class TestLauncher {
             .build();
 
         List<TestBase> allTests = List.of(
-//            new CreateSingleVertex(),
+            new CreateSingleVertex(),
 //            new CreateSingleVertexStringIndex(),
 //            new CreateSingleVertexStringUniqueIndex(),
 //            new CreateSingleVertexStringUniqueHashIndex(),
@@ -115,8 +131,9 @@ public class TestLauncher {
 //            new CreateSingleVertexCompoundIndex(),
 //            new CreateSingleVertexCompoundUniqueIndex(),
 //            new CreateSingleVertexCompoundUniqueHashIndex(),
-//            new CreateRelationsInFlatStructure(),
-            new CreateRelationsInStarStructure()
+                new CreateRelationsInFlatStructure(),
+                new CreateRelationsInStarStructure(),
+                new CreateBasicRelationTest()
         );
 
         System.out.printf("Starting with database: %s\n", dbType.toString());

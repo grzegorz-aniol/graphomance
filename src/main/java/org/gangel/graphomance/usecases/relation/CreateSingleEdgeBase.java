@@ -9,14 +9,14 @@ import java.util.Map;
 
 public abstract class CreateSingleEdgeBase extends TestBase {
 
-  protected long numOfNodes = 1_000;
+  protected int numOfNodes = 1_000;
   protected final String CITY_CLASS = "City";
   protected final String ROADTO_CLASS = "RoadTo";
   protected final String NAME_PROP = "name";
   protected final String SIZE_PROP = "size";
   protected final List<NodeIdentifier> nodesId = new LinkedList<>();
 
-  protected CreateSingleEdgeBase(final long numOfNodes) {
+  protected CreateSingleEdgeBase(final int numOfNodes) {
     this.numOfNodes = numOfNodes;
   }
 

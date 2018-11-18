@@ -9,7 +9,7 @@ sourceCompatibility = 10
 
 ext {
     orientDbVersion = '3.0.9'
-    arangoDbVersion = '4.2.2'
+    arangoApiVersion = '5.0.3'
 }
 
 repositories {
@@ -28,7 +28,7 @@ dependencies {
 
     compile group: 'org.neo4j', name: 'neo4j', version: '3.4.9'
 
-    compile group: 'com.arangodb', name: 'arangodb-java-driver', version: arangoDbVersion
+    compile group: 'com.arangodb', name: 'arangodb-java-driver', version: arangoApiVersion
 
     compile("org.assertj:assertj-core:3.11.1")
 
