@@ -31,6 +31,10 @@ public abstract class CreateSingleVertexBase extends TestBase {
 
     @Override
     public void setUpTest() {
+    }
+
+    @Override
+    public void createTestData() {
         if (session.schemaApi().classExists(USER_CLASS)) {
             session.objectApi().deleteAllNodes(USER_CLASS);
         }
@@ -52,10 +56,6 @@ public abstract class CreateSingleVertexBase extends TestBase {
                 session.schemaApi().createIndex("User_uid", USER_CLASS, indexType, true, "uid");
             }
         }
-    }
-
-    @Override
-    public void createTestData() {
     }
 
     @Override
@@ -84,7 +84,7 @@ public abstract class CreateSingleVertexBase extends TestBase {
     }
 
     @Override
-    public void cleanUpAfter() {
+    public void cleanUpData() {
         session.schemaApi().dropAllIndexesOnClass(USER_CLASS);
         session.objectApi().deleteAllNodes(USER_CLASS);
         session.schemaApi().dropClass(USER_CLASS);

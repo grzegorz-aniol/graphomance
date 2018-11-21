@@ -13,15 +13,12 @@ public class CreateBasicRelationTest extends TestBase {
 
     @Override
     public void setUpTest() {
-        if (schemaApi.classExists("Person")) {
-            cleanUpAfter();
-        }
-        schemaApi.createClass("Person");
-        schemaApi.createRelationClass("FriendOf");
     }
 
     @Override
     public void createTestData() {
+        schemaApi.createClass("Person");
+        schemaApi.createRelationClass("FriendOf");
     }
 
     @Override
@@ -32,8 +29,10 @@ public class CreateBasicRelationTest extends TestBase {
     }
 
     @Override
-    public void cleanUpAfter() {
-        objectApi.deleteAllNodes("FriendOf");
+    public void cleanUpData() {
+        objectApi.deleteAllRelations("FriendOf");
         objectApi.deleteAllNodes("Person");
+        schemaApi.dropClass("Person");
+        schemaApi.dropClass("FriendOf");
     }
 }

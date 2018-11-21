@@ -46,14 +46,7 @@ public class OrientObjectApi implements ObjectApi {
       oVertex.setProperty(k,v);
     });
     ORID id = Objects.requireNonNull(oVertex.save().getIdentity(), "Can't read new node ID");
-    Metrics.CREATED_VERTICES_METER.mark();
     return NodeId.build(id);
-        /*
-        try (OResultSet command = session.command(String.format("create node %s", className))) {
-            OResult res = Objects.requireNonNull(command.next());
-            return NodeId.build(res.getIdentity().get());
-        }
-        */
   }
 
   @Override
@@ -63,7 +56,6 @@ public class OrientObjectApi implements ObjectApi {
           Map.of("f", NodeId.getORID(fromNode),
         "t", NodeId.getORID(toNode)))) {
       OResult res = Objects.requireNonNull(command.next(), "Can't read new relation ID");
-      Metrics.CREATED_RELATION_METER.mark();
       return EdgeId.build(res.getIdentity().get());
     }
 

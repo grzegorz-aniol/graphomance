@@ -10,7 +10,7 @@ public interface TestCase {
 
     void performTest();
 
-    void cleanUpAfter();
+    void cleanUpData();
 
     void terminate();
 

@@ -1,8 +1,6 @@
 package org.gangel.graphomance.engine;
 
-import com.codahale.metrics.ConsoleReporter;
-import com.codahale.metrics.CsvReporter;
-import com.codahale.metrics.SharedMetricRegistries;
+import com.codahale.metrics.*;
 import org.apache.commons.cli.*;
 import org.apache.commons.lang3.time.StopWatch;
 import org.gangel.graphomance.Connection;
@@ -13,6 +11,7 @@ import org.gangel.graphomance.arangodb.ArangoConnectionProducer;
 import org.gangel.graphomance.arangodb.ArangoConnectionSettings;
 import org.gangel.graphomance.arangodb.ArangoSessionProducer;
 import org.gangel.graphomance.metrics.Metrics;
+import org.gangel.graphomance.metrics.TimeGauge;
 import org.gangel.graphomance.neo4j.NeoConnectionProducer;
 import org.gangel.graphomance.neo4j.NeoConnectionSettings;
 import org.gangel.graphomance.orientdb.OrientConnectionProducer;
@@ -121,7 +120,10 @@ public class TestLauncher {
             .build();
 
         List<TestBase> allTests = List.of(
-            new CreateSingleVertex(),
+                new CreateBasicRelationTest(),
+                new CreateSingleVertex(),
+                new CreateRelationsInFlatStructure(),
+                new CreateRelationsInStarStructure()
 //            new CreateSingleVertexStringIndex(),
 //            new CreateSingleVertexStringUniqueIndex(),
 //            new CreateSingleVertexStringUniqueHashIndex(),
@@ -131,9 +133,6 @@ public class TestLauncher {
 //            new CreateSingleVertexCompoundIndex(),
 //            new CreateSingleVertexCompoundUniqueIndex(),
 //            new CreateSingleVertexCompoundUniqueHashIndex(),
-                new CreateRelationsInFlatStructure(),
-                new CreateRelationsInStarStructure(),
-                new CreateBasicRelationTest()
         );
 
         System.out.printf("Starting with database: %s\n", dbType.toString());
@@ -156,20 +155,37 @@ public class TestLauncher {
         csvReporter.report();
     }
 
+    private static void addNewMetric(String testName, String metricsName, Runnable body) {
+        TimeGauge t = new TimeGauge();
+        SharedMetricRegistries.getDefault().register(String.format("%s.%s", testName, metricsName), t);
+
+        t.start();
+        body.run();
+        t.stop();
+    }
+
     public static void runTest(TestBase test) {
+
         try {
-            System.out.printf("Setup test: %s \n", test.getClass().getSimpleName());
+            final String testName =  test.getClass().getSimpleName();
+            System.out.printf("Setup test: %s \n", testName);
             test.setUpTest();
+
+            System.out.println("Cleaning up...");
+            test.cleanUpData();
+
             System.out.printf("Test data generation...\n");
-            test.createTestData();
+            addNewMetric(testName, "1.DataGeneration", () -> test.createTestData() );
+
             System.out.println("Starting test...");
             StopWatch timer = StopWatch.createStarted();
-            test.performTest();
+            addNewMetric(testName,"2.Test", () -> test.performTest());
             timer.stop();
             System.out.println("Test done. Time: " + timer.toString());
 
             System.out.println("Cleaning up...");
-            test.cleanUpAfter();
+            addNewMetric(testName,"3.CleanUp", () -> test.cleanUpData());
+
             System.out.println("Test done.");
 
         } catch (Throwable e) {

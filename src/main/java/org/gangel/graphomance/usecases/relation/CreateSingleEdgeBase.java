@@ -22,17 +22,16 @@ public abstract class CreateSingleEdgeBase extends TestBase {
 
   @Override
   public void setUpTest() {
-    cleanUpAfter();
+  }
 
+  @Override
+  public void createTestData() {
     schemaApi.createClass(CITY_CLASS);
     schemaApi.createProperty(CITY_CLASS, NAME_PROP, String.class, true);
     schemaApi.createProperty(CITY_CLASS, SIZE_PROP, Long.class, true );
 
     schemaApi.createRelationClass(ROADTO_CLASS);
-  }
 
-  @Override
-  public void createTestData() {
     objectApi.startTransaction();
     try {
       for(int i = 0; i < numOfNodes; ++i) {
@@ -49,7 +48,7 @@ public abstract class CreateSingleEdgeBase extends TestBase {
   }
 
   @Override
-  public void cleanUpAfter() {
+  public void cleanUpData() {
     schemaApi.dropAllIndexesOnClass(CITY_CLASS);
     objectApi.deleteAllRelations(ROADTO_CLASS);
     objectApi.deleteAllNodes(CITY_CLASS);
