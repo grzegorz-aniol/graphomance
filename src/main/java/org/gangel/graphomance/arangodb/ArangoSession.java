@@ -7,6 +7,7 @@ import org.gangel.graphomance.ManagementApi;
 import org.gangel.graphomance.ObjectApi;
 import org.gangel.graphomance.SchemaApi;
 import org.gangel.graphomance.Session;
+import org.gangel.graphomance.metrics.ObjectApiMetricsWrapper;
 
 @Builder
 public class ArangoSession implements Session {
@@ -28,7 +29,7 @@ public class ArangoSession implements Session {
 
     @Override
     public ObjectApi objectApi() {
-        return ArangoObjectApi.builder().db(db).build();
+        return ObjectApiMetricsWrapper.create(ArangoObjectApi.builder().db(db).build());
     }
 
     @Override

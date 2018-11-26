@@ -44,6 +44,16 @@ public class NeoObjectApi implements ObjectApi {
     }
 
     @Override
+    public Object getNode(String clsName, NodeIdentifier nodeId) {
+        return null;
+    }
+
+    @Override
+    public long shortestPath(NodeIdentifier start, NodeIdentifier end) {
+        return 0L;
+    }
+
+    @Override
     public NodeIdentifier createNode(String clsName, Map<String, Object> properties) {
         try(Result rs = dbService.execute(String.format("create (n:%s $map) return ID(n) as ident", clsName), Map.of("map", properties))) {
             if (!rs.hasNext()) {
@@ -52,6 +62,11 @@ public class NeoObjectApi implements ObjectApi {
             Long id = (Long)rs.next().get("ident");
             return NeoIdentifier.builder().id(id).build();
         }
+    }
+
+    @Override
+    public void updateNode(String clsName, NodeIdentifier nodeId, Map<String, Object> properties) {
+        throw new RuntimeException("Not implemented!");
     }
 
     @Override
@@ -64,6 +79,12 @@ public class NeoObjectApi implements ObjectApi {
             Long id = (Long) rs.next().get("ID(r)");
             return NeoIdentifier.builder().id(id).build();
         }
+    }
+
+    @Override
+    public void updateRelation(String clsName, RelationIdentifier edgeId, Map<String, Object> properties) {
+        throw new RuntimeException("Not implemented!");
+
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.gangel.graphomance.usecases.relation;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 import org.gangel.graphomance.NodeIdentifier;
+import org.gangel.graphomance.RelationIdentifier;
 import org.gangel.graphomance.engine.TestLimit;
 
 import java.time.Duration;
@@ -11,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CreateRelationsInStarStructure extends CreateSingleEdgeBase {
 
-  private static final int SQUARE_SIZE = 50;
+  private static final int SQUARE_SIZE = 100;
   private static final int WARM_UP = 100;
 
   public CreateRelationsInStarStructure() {
@@ -34,15 +35,16 @@ public class CreateRelationsInStarStructure extends CreateSingleEdgeBase {
       limit.increment();
 
       NodeIdentifier sourceId = nodesId.get(index);
-
+      RelationIdentifier relationId;
       Timer.Context ts = (++count > WARM_UP ? timerMetric.time() : null);
       try {
-        objectApi.createRelation(ROADTO_CLASS, sourceId, parentNodeId);
+        relationId = objectApi.createRelation(ROADTO_CLASS, sourceId, parentNodeId);
       } finally {
         if (ts != null) {
           ts.close();
         }
       }
+      relationsId.add(relationId);
 
       // move to next node in the matrix
       index = (index + 1) % numOfNodes;

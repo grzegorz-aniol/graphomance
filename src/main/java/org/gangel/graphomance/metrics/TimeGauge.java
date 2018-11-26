@@ -9,12 +9,23 @@ public class TimeGauge implements Gauge<Double> {
 
     private StopWatch timer = StopWatch.createStarted();
 
+    private TimeUnit unit = TimeUnit.SECONDS;
+
     public TimeGauge() {
+    }
+
+    public TimeGauge(TimeUnit unit) {
+        this.unit = unit;
     }
 
     @Override
     public Double getValue() {
-        return Double.valueOf(timer.getTime(TimeUnit.MICROSECONDS));
+        return convert(timer.getTime(TimeUnit.MICROSECONDS));
+    }
+
+    public Double convert(long d) {
+        double m = unit.toMicros(1);
+        return d / m;
     }
 
     public void start() {

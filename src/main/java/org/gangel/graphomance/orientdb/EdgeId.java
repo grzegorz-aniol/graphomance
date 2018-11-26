@@ -23,4 +23,13 @@ class EdgeId implements RelationIdentifier {
     public static final EdgeId build(ORID orid) {
         return new EdgeId(orid);
     }
+
+    public static  final ORID getORID(final RelationIdentifier idObject) {
+        if (!(idObject instanceof EdgeId)) {
+            throw new RuntimeException("Wrong implementation of identifier");
+        }
+        return ((EdgeId)idObject).id;
+    }
+
+
 }

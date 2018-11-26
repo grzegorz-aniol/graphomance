@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import org.gangel.graphomance.NodeIdentifier;
+import org.gangel.graphomance.RelationIdentifier;
 
 class NodeId implements NodeIdentifier {
 
@@ -31,4 +32,5 @@ class NodeId implements NodeIdentifier {
         }
         return ((NodeId)idObject).id;
     }
+
 }

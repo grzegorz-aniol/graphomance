@@ -5,6 +5,7 @@ import org.gangel.graphomance.ManagementApi;
 import org.gangel.graphomance.ObjectApi;
 import org.gangel.graphomance.SchemaApi;
 import org.gangel.graphomance.Session;
+import org.gangel.graphomance.metrics.ObjectApiMetricsWrapper;
 import org.neo4j.graphdb.GraphDatabaseService;
 
 class NeoSession implements Session, ManagementApi {
@@ -15,15 +16,15 @@ class NeoSession implements Session, ManagementApi {
     @Getter
     private GraphDatabaseService dbService;
 
-    private NeoSchemaApi schemaApi;
+    private SchemaApi schemaApi;
 
-    private NeoObjectApi objectApi;
+    private ObjectApi objectApi;
 
     NeoSession(NeoConnection connection) {
         this.connection = connection;
         this.dbService = connection.getDbService();
         this.schemaApi = new NeoSchemaApi(this);
-        this.objectApi = new NeoObjectApi(this);
+        this.objectApi = ObjectApiMetricsWrapper.create(new NeoObjectApi(this));
     }
 
     @Override

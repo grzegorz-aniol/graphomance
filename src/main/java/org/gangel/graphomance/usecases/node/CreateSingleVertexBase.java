@@ -17,7 +17,7 @@ public abstract class CreateSingleVertexBase extends TestBase {
     protected final boolean isIndexLong;
     protected final boolean isIndexString;
     private final static String USER_CLASS = "UserNode";
-    private final long MIN_ITERATIONS = 1_000;
+    private final long MIN_ITERATIONS = 100_000;
     private final Duration MIN_TEST_TIME = Duration.ofSeconds(5);
     private final Duration MAX_TEST_TIME = Duration.ofSeconds(30);
 

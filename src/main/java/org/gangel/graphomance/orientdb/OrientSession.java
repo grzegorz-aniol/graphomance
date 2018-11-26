@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.gangel.graphomance.*;
 import org.gangel.graphomance.metrics.Metrics;
+import org.gangel.graphomance.metrics.ObjectApiMetricsWrapper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,14 +23,14 @@ public class OrientSession implements Session, ManagementApi {
     @Getter
     private ODatabaseSession session;
 
-    private OrientSchemaApi schemaApi;
+    private SchemaApi schemaApi;
 
-    private OrientObjectApi objectApi;
+    private ObjectApi objectApi;
 
     OrientSession(ODatabaseSession session) {
         this.session = session;
         this.schemaApi = new OrientSchemaApi(session, this);
-        this.objectApi = new OrientObjectApi(session, this);
+        this.objectApi = ObjectApiMetricsWrapper.create(new OrientObjectApi(session, this));
     }
 
     @Override

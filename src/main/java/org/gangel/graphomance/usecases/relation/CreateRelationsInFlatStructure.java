@@ -3,6 +3,7 @@ package org.gangel.graphomance.usecases.relation;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 import org.gangel.graphomance.NodeIdentifier;
+import org.gangel.graphomance.RelationIdentifier;
 import org.gangel.graphomance.engine.TestLimit;
 
 import java.time.Duration;
@@ -40,14 +41,17 @@ public class CreateRelationsInFlatStructure extends CreateSingleEdgeBase {
       nodes[3] = getNode(prev(row), column );
 
       for (NodeIdentifier nodeId : nodes) {
+        RelationIdentifier relationId;
+
         Timer.Context ts = (++count > WARM_UP ? timerMetric.time() : null);
         try {
-          objectApi.createRelation(ROADTO_CLASS, sourceId, nodeId);
+          relationId = objectApi.createRelation(ROADTO_CLASS, sourceId, nodeId);
         } finally {
           if (ts != null) {
             ts.close();
           }
         }
+        relationsId.add(relationId);
       }
 
       // move to next node in the matrix
