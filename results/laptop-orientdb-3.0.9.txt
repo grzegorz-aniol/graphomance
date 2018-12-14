@@ -1,0 +1,60 @@
+Laptop: OrientDB
+
+11/22/18, 9:50:41 AM ===========================================================
+
+-- Gauges ----------------------------------------------------------------------
+CreateBasicRelationTest.1.DataGeneration
+             value = 607529.0
+CreateBasicRelationTest.2.Test
+             value = 19716.0
+CreateBasicRelationTest.3.CleanUp
+             value = 687634.0
+CreateRelationsInFlatStructure.1.DataGeneration
+             value = 901889.0
+CreateRelationsInFlatStructure.2.Test
+             value = 1.3487952E7
+CreateRelationsInFlatStructure.3.CleanUp
+             value = 4441753.0
+CreateRelationsInStarStructure.1.DataGeneration
+             value = 557982.0
+CreateRelationsInStarStructure.2.Test
+             value = 1.0000731E7
+CreateRelationsInStarStructure.3.CleanUp
+             value = 4524487.0
+CreateSingleVertex.1.DataGeneration
+             value = 321983.0
+CreateSingleVertex.2.Test
+             value = 5001024.0
+CreateSingleVertex.3.CleanUp
+             value = 1434334.0
+
+-- Meters ----------------------------------------------------------------------
+Creating node
+             count = 0
+         mean rate = 0.00 events/second
+Creating relation
+             count = 0
+         mean rate = 0.00 events/second
+
+-- Timers ----------------------------------------------------------------------
+Create node
+             count = 50275
+         mean rate = 1244.91 calls/second
+               min = 65.80 microseconds
+               max = 450.30 microseconds
+              mean = 90.16 microseconds
+              99% <= 234.20 microseconds
+CreateRelationsInFlatStructure
+             count = 39950
+         mean rate = 1209.21 calls/second
+               min = 137.10 microseconds
+               max = 5330.30 microseconds
+              mean = 320.57 microseconds
+              99% <= 954.80 microseconds
+CreateRelationsInStarStructure
+             count = 34626
+         mean rate = 2381.32 calls/second
+               min = 141.60 microseconds
+               max = 3151.00 microseconds
+              mean = 261.33 microseconds
+              99% <= 863.80 microseconds
