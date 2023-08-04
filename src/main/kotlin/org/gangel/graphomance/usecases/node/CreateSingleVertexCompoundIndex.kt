@@ -1,0 +1,6 @@
+package org.gangel.graphomance.usecases.node
+
+import org.gangel.graphomance.IndexType
+
+class CreateSingleVertexCompoundIndex :
+	CreateSingleVertexBase("Create node with compound index", IndexType.DEFAULT, true, true) 
