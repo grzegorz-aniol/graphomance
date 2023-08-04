@@ -1,7 +1,7 @@
 package org.gangel.graphomance.usecases.node
 
-import org.gangel.graphomance.DbType
-import org.gangel.graphomance.IndexType
+import org.gangel.graphomance.api.DbType
+import org.gangel.graphomance.api.IndexType
 
 class CreateSingleVertexStringUniqueHashIndex :
 	CreateSingleVertexBase("Create node with string unique hash index",

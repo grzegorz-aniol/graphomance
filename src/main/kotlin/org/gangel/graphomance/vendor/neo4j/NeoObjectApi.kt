@@ -1,8 +1,8 @@
-package org.gangel.graphomance.neo4j
+package org.gangel.graphomance.vendor.neo4j
 
-import org.gangel.graphomance.NodeIdentifier
-import org.gangel.graphomance.ObjectApi
-import org.gangel.graphomance.RelationIdentifier
+import org.gangel.graphomance.api.NodeIdentifier
+import org.gangel.graphomance.api.ObjectApi
+import org.gangel.graphomance.api.RelationIdentifier
 import org.neo4j.driver.Transaction
 
 class NeoObjectApi internal constructor(private val session: NeoSession) : ObjectApi {

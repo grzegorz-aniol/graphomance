@@ -1,8 +1,8 @@
 package org.gangel.graphomance.metrics
 
-import org.gangel.graphomance.NodeIdentifier
-import org.gangel.graphomance.ObjectApi
-import org.gangel.graphomance.RelationIdentifier
+import org.gangel.graphomance.api.NodeIdentifier
+import org.gangel.graphomance.api.ObjectApi
+import org.gangel.graphomance.api.RelationIdentifier
 
 class ObjectApiMetricsWrapper(private val delegate: ObjectApi) : ObjectApi {
 	override fun startTransaction() {

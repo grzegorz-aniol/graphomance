@@ -1,7 +1,7 @@
 package org.gangel.graphomance.usecases.node
 
-import org.gangel.graphomance.DbType
-import org.gangel.graphomance.IndexType
+import org.gangel.graphomance.api.DbType
+import org.gangel.graphomance.api.IndexType
 
 class CreateSingleVertexLongUniqueHashIndex :
 	CreateSingleVertexBase("Create node with long unique hash index",

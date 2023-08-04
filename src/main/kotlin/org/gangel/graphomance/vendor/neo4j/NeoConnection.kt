@@ -1,6 +1,6 @@
-package org.gangel.graphomance.neo4j
+package org.gangel.graphomance.vendor.neo4j
 
-import org.gangel.graphomance.Connection
+import org.gangel.graphomance.api.Connection
 import org.neo4j.driver.Driver
 import org.neo4j.driver.Session
 

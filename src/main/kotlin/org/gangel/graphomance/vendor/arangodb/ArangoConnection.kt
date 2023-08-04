@@ -1,7 +1,7 @@
-package org.gangel.graphomance.arangodb
+package org.gangel.graphomance.vendor.arangodb
 
 import com.arangodb.ArangoDB
-import org.gangel.graphomance.Connection
+import org.gangel.graphomance.api.Connection
 
 class ArangoConnection(
 	val db: ArangoDB,

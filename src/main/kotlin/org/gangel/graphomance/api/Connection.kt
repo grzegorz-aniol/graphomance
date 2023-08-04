@@ -1,4 +1,4 @@
-package org.gangel.graphomance
+package org.gangel.graphomance.api
 
 import java.io.Closeable
 

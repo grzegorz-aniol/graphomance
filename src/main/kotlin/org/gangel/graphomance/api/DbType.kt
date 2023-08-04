@@ -1,4 +1,4 @@
-package org.gangel.graphomance
+package org.gangel.graphomance.api
 
 enum class DbType {
 	NEO4J, ARANGODB;

@@ -1,11 +1,10 @@
-package org.gangel.graphomance.arangodb
+package org.gangel.graphomance.vendor.arangodb
 
 import com.arangodb.ArangoCollection
 import com.arangodb.ArangoDatabase
 import com.arangodb.entity.CollectionType
 import com.arangodb.model.CollectionCreateOptions
-import org.gangel.graphomance.IndexType
-import org.gangel.graphomance.SchemaApi
+import org.gangel.graphomance.api.SchemaApi
 import java.util.Optional
 
 class ArangoSchemaApi(

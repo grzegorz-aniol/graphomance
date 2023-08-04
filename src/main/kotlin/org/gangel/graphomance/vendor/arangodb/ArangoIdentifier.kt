@@ -1,7 +1,7 @@
-package org.gangel.graphomance.arangodb
+package org.gangel.graphomance.vendor.arangodb
 
-import org.gangel.graphomance.NodeIdentifier
-import org.gangel.graphomance.RelationIdentifier
+import org.gangel.graphomance.api.NodeIdentifier
+import org.gangel.graphomance.api.RelationIdentifier
 import java.util.Objects
 
 class ArangoIdentifier(

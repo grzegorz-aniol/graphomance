@@ -1,13 +1,13 @@
-package org.gangel.graphomance.arangodb
+package org.gangel.graphomance.vendor.arangodb
 
 import com.arangodb.ArangoCollection
 import com.arangodb.ArangoDatabase
 import com.arangodb.entity.BaseDocument
 import com.arangodb.entity.BaseEdgeDocument
 import com.arangodb.util.MapBuilder
-import org.gangel.graphomance.NodeIdentifier
-import org.gangel.graphomance.ObjectApi
-import org.gangel.graphomance.RelationIdentifier
+import org.gangel.graphomance.api.NodeIdentifier
+import org.gangel.graphomance.api.ObjectApi
+import org.gangel.graphomance.api.RelationIdentifier
 import java.util.Optional
 
 class ArangoObjectApi(
@@ -28,7 +28,7 @@ class ArangoObjectApi(
 	}
 
 	override fun shortestPath(start: NodeIdentifier,
-		end: NodeIdentifier
+							  end: NodeIdentifier
 	): Long {
 		val edgeClsName = "RoadTo"
 		val TEMPL = String.format("""RETURN LENGTH(
@@ -37,8 +37,8 @@ class ArangoObjectApi(
     RETURN v
 )""", edgeClsName)
 		val bindVars = MapBuilder()
-			.put("a", ArangoIdentifier.Companion.getId(start))
-			.put("b", ArangoIdentifier.Companion.getId(end))
+			.put("a", ArangoIdentifier.getId(start))
+			.put("b", ArangoIdentifier.getId(end))
 			.get()
 		val cursor = db.query(TEMPL, bindVars, null, Long::class.java)
 		return if (cursor.hasNext()) {
@@ -59,21 +59,21 @@ class ArangoObjectApi(
 	}
 
 	override fun updateNode(clsName: String,
-		nodeId: NodeIdentifier,
-		properties: Map<String, Any>
+							nodeId: NodeIdentifier,
+							properties: Map<String, Any>
 	) {
 		val doc = BaseDocument()
 		if (properties != null) {
 			doc.properties = properties
 		}
 		db.collection(clsName)
-			.updateDocument(ArangoIdentifier.Companion.getKey(nodeId), doc)
+			.updateDocument(ArangoIdentifier.getKey(nodeId), doc)
 	}
 
 	override fun createRelation(className: String,
-		fromNode: NodeIdentifier,
-		toNode: NodeIdentifier,
-		properties: Map<String, Any>
+								fromNode: NodeIdentifier,
+								toNode: NodeIdentifier,
+								properties: Map<String, Any>
 	): RelationIdentifier {
 		val doc = BaseEdgeDocument()
 		doc.from = ArangoIdentifier.getId(fromNode)
@@ -89,15 +89,15 @@ class ArangoObjectApi(
 	}
 
 	override fun updateRelation(clsName: String,
-		edgeId: RelationIdentifier,
-		properties: Map<String, Any>
+								edgeId: RelationIdentifier,
+								properties: Map<String, Any>
 	) {
 		val doc = BaseDocument()
 		if (properties != null) {
 			doc.properties = properties
 		}
 		db.collection(clsName)
-			.updateDocument(ArangoIdentifier.Companion.getKey(edgeId), doc)
+			.updateDocument(ArangoIdentifier.getKey(edgeId), doc)
 	}
 
 	override fun deleteAllNodes(clsName: String) {

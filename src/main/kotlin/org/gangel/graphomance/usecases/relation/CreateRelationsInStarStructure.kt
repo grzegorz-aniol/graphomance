@@ -3,8 +3,7 @@ package org.gangel.graphomance.usecases.relation
 import com.codahale.metrics.SharedMetricRegistries
 import com.codahale.metrics.Timer
 import org.assertj.core.api.Assertions
-import org.gangel.graphomance.RelationIdentifier
-import org.gangel.graphomance.Session
+import org.gangel.graphomance.api.Session
 import org.gangel.graphomance.engine.TestLimit
 import java.time.Duration
 

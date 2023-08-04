@@ -1,7 +1,6 @@
-package org.gangel.graphomance.neo4j
+package org.gangel.graphomance.vendor.neo4j
 
-import org.gangel.graphomance.SchemaApi
-import java.time.Duration
+import org.gangel.graphomance.api.SchemaApi
 
 internal class NeoSchemaApi(private val session: NeoSession) : SchemaApi {
 

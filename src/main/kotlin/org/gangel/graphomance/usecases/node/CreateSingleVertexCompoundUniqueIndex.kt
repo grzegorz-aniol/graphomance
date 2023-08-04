@@ -1,6 +1,6 @@
 package org.gangel.graphomance.usecases.node
 
-import org.gangel.graphomance.IndexType
+import org.gangel.graphomance.api.IndexType
 
 class CreateSingleVertexCompoundUniqueIndex :
 	CreateSingleVertexBase("Create node with compound unique index",

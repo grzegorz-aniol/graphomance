@@ -1,6 +1,6 @@
-package org.gangel.graphomance.arangodb
+package org.gangel.graphomance.vendor.arangodb
 
-import org.gangel.graphomance.ConnectionSettings
+import org.gangel.graphomance.api.ConnectionSettings
 
 class ArangoConnectionSettings(
 	val dbName: String = "test",

@@ -1,8 +1,8 @@
-package org.gangel.graphomance.arangodb
+package org.gangel.graphomance.vendor.arangodb
 
-import org.gangel.graphomance.Connection
-import org.gangel.graphomance.Session
-import org.gangel.graphomance.SessionProducer
+import org.gangel.graphomance.api.Connection
+import org.gangel.graphomance.api.Session
+import org.gangel.graphomance.api.SessionProducer
 import java.util.Objects
 
 class ArangoSessionProducer : SessionProducer {

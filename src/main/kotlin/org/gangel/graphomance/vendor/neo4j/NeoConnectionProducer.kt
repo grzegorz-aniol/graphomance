@@ -1,7 +1,6 @@
-package org.gangel.graphomance.neo4j
+package org.gangel.graphomance.vendor.neo4j
 
-import org.gangel.graphomance.*
-import org.neo4j.driver.AuthToken
+import org.gangel.graphomance.api.*
 import org.neo4j.driver.AuthTokens
 import org.neo4j.driver.GraphDatabase
 

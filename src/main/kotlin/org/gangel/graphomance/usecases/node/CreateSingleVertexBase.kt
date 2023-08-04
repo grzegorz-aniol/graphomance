@@ -2,8 +2,8 @@ package org.gangel.graphomance.usecases.node
 
 import com.codahale.metrics.SharedMetricRegistries
 import com.codahale.metrics.Timer
-import org.gangel.graphomance.IndexType
-import org.gangel.graphomance.Session
+import org.gangel.graphomance.api.IndexType
+import org.gangel.graphomance.api.Session
 import org.gangel.graphomance.engine.TestLimit
 import org.gangel.graphomance.usecases.TestBase
 import java.time.Duration

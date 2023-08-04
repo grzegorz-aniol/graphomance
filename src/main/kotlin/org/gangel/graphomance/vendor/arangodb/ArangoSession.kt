@@ -1,9 +1,9 @@
-package org.gangel.graphomance.arangodb
+package org.gangel.graphomance.vendor.arangodb
 
 import com.arangodb.ArangoDatabase
-import org.gangel.graphomance.ObjectApi
-import org.gangel.graphomance.SchemaApi
-import org.gangel.graphomance.Session
+import org.gangel.graphomance.api.ObjectApi
+import org.gangel.graphomance.api.SchemaApi
+import org.gangel.graphomance.api.Session
 import org.gangel.graphomance.metrics.ObjectApiMetricsWrapper
 
 class ArangoSession(

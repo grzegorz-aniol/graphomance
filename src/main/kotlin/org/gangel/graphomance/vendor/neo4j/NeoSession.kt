@@ -1,12 +1,12 @@
-package org.gangel.graphomance.neo4j
+package org.gangel.graphomance.vendor.neo4j
 
-import org.gangel.graphomance.ObjectApi
-import org.gangel.graphomance.SchemaApi
-import org.gangel.graphomance.Session
+import org.gangel.graphomance.api.ObjectApi
+import org.gangel.graphomance.api.SchemaApi
+import org.gangel.graphomance.api.Session
 import org.gangel.graphomance.metrics.ObjectApiMetricsWrapper
 
 internal class NeoSession(
-	val connection: NeoConnection,
+		val connection: NeoConnection,
 ) : Session {
 
 	val neo4jSession: org.neo4j.driver.Session = connection.session()

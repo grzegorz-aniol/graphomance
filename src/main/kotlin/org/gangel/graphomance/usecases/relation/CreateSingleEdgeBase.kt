@@ -1,13 +1,11 @@
 package org.gangel.graphomance.usecases.relation
 
-import org.gangel.graphomance.NodeIdentifier
-import org.gangel.graphomance.RelationIdentifier
-import org.gangel.graphomance.Session
+import org.gangel.graphomance.api.NodeIdentifier
+import org.gangel.graphomance.api.RelationIdentifier
+import org.gangel.graphomance.api.Session
 import org.gangel.graphomance.engine.TestLimit
 import org.gangel.graphomance.usecases.TestBase
 import java.time.Duration
-import java.util.LinkedHashMap
-import java.util.LinkedList
 import java.util.Objects
 import java.util.Random
 

@@ -1,9 +1,6 @@
 package org.gangel.graphomance.usecases
 
-import org.gangel.graphomance.NodeIdentifier
-import org.gangel.graphomance.RelationIdentifier
-import org.gangel.graphomance.Session
-import org.gangel.graphomance.neo4j.NeoIdentifier
+import org.gangel.graphomance.api.Session
 
 class CreateBasicRelationTest : TestBase() {
 	override fun setUpTest(session: Session) {}

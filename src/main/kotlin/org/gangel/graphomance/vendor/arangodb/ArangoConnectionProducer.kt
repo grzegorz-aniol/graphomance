@@ -1,9 +1,9 @@
-package org.gangel.graphomance.arangodb
+package org.gangel.graphomance.vendor.arangodb
 
 import com.arangodb.ArangoDB
-import org.gangel.graphomance.Connection
-import org.gangel.graphomance.ConnectionProducer
-import org.gangel.graphomance.ConnectionSettings
+import org.gangel.graphomance.api.Connection
+import org.gangel.graphomance.api.ConnectionProducer
+import org.gangel.graphomance.api.ConnectionSettings
 
 class ArangoConnectionProducer : ConnectionProducer {
 	override fun connect(settings: ConnectionSettings): Connection {
