@@ -113,4 +113,8 @@ class ArangoObjectApi(
 				.ifPresent { c: ArangoCollection -> c.drop() }
 		}
 	}
+
+	override fun cleanDatabase() {
+		db.collections.forEach { db.collection(it.name).drop() }
+	}
 }

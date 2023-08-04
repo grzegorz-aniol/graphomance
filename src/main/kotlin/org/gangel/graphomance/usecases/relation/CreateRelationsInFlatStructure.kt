@@ -29,8 +29,7 @@ class CreateRelationsInFlatStructure :
                     getNode(next(row), column),
                     getNode(prev(row), column))
             for (nodeId in nodes) {
-                val ts =
-                        if (++count > WARM_UP) timerMetric.time() else null
+                val ts = if (++count > WARM_UP) timerMetric.time() else null
                 val relationId = try {
                     objectApi.createRelation(ROADTO_CLASS, sourceId, nodeId)
                 } finally {

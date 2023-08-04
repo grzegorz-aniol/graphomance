@@ -89,6 +89,10 @@ class ObjectApiMetricsWrapper(private val delegate: ObjectApi) : ObjectApi {
 		delegate.deleteAllRelations(clsName)
 	}
 
+	override fun cleanDatabase() {
+		delegate.cleanDatabase()
+	}
+
 	companion object {
 		fun create(delegate: ObjectApi): ObjectApiMetricsWrapper {
 			return ObjectApiMetricsWrapper(delegate)

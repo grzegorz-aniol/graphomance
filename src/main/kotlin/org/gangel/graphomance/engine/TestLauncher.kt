@@ -7,18 +7,18 @@ import com.codahale.metrics.SharedMetricRegistries
 import org.apache.commons.cli.*
 import org.apache.commons.lang3.time.StopWatch
 import org.gangel.graphomance.api.*
-import org.gangel.graphomance.vendor.arangodb.ArangoConnectionProducer
-import org.gangel.graphomance.vendor.arangodb.ArangoConnectionSettings
-import org.gangel.graphomance.vendor.arangodb.ArangoSessionProducer
 import org.gangel.graphomance.metrics.Metrics
 import org.gangel.graphomance.metrics.TimeGauge
-import org.gangel.graphomance.vendor.neo4j.NeoConnectionProducer
-import org.gangel.graphomance.vendor.neo4j.NeoConnectionSettings
 import org.gangel.graphomance.usecases.CreateBasicRelationTest
 import org.gangel.graphomance.usecases.TestBase
 import org.gangel.graphomance.usecases.node.CreateSingleVertex
 import org.gangel.graphomance.usecases.relation.CreateRelationsInFlatStructure
 import org.gangel.graphomance.usecases.relation.CreateRelationsInStarStructure
+import org.gangel.graphomance.vendor.arangodb.ArangoConnectionProducer
+import org.gangel.graphomance.vendor.arangodb.ArangoConnectionSettings
+import org.gangel.graphomance.vendor.arangodb.ArangoSessionProducer
+import org.gangel.graphomance.vendor.neo4j.NeoConnectionProducer
+import org.gangel.graphomance.vendor.neo4j.NeoConnectionSettings
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -115,9 +115,7 @@ object TestLauncher {
 				System.out.printf("Skipping test '%s'\n",
 								  test.javaClass.simpleName)
 			} else {
-				sessionProducer.createSession(connection).use { session ->
-					runTest(test, session)
-				}
+				runTest(test, connection, sessionProducer)
 			}
 		})
 		connection.close()
@@ -134,27 +132,30 @@ object TestLauncher {
 		t.stop()
 	}
 
-	fun runTest(test: TestBase, session: Session) {
+	private fun runTest(test: TestBase, connection: Connection, sessionProducer: SessionProducer) {
+		val createNewSession: ()->Session = { sessionProducer.createSession(connection) }
 		try {
 			val testName = test.javaClass.simpleName
 			System.out.printf("Setup test: %s \n", testName)
-			test.setUpTest(session)
+			test.setUpTest(createNewSession())
 			println("Cleaning up...")
-			test.cleanUpData(session)
+			test.cleanUpData(createNewSession())
 			System.out.printf("Test data generation...\n")
-			addNewMetric(testName, "DataGeneration") { test.createTestData(session) }
+			addNewMetric(testName, "DataGeneration") {
+				test.createTestData(createNewSession())
+			}
 			val timer = StopWatch.createStarted()
 			val stages = test.stages
 			var stageNum = 0
 			stages.forEach { (stageName, action) ->
 				++stageNum
 				System.out.printf(" > running test stage %d - %s..\n", stageNum, stageName)
-				addNewMetric(testName, stageName) { action(session) }
+				addNewMetric(testName, stageName) { action(createNewSession()) }
 			}
 			timer.stop()
 			println("Test done. Time: $timer")
 			println("Cleaning up...")
-			addNewMetric(testName, "CleanUp") { test.cleanUpData(session) }
+			addNewMetric(testName, "CleanUp") { test.cleanUpData(createNewSession()) }
 			println("Test done.")
 		} catch (e: Throwable) {
 			println("Test error: " + e.message)

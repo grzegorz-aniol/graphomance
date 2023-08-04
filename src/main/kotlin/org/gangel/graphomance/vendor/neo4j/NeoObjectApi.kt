@@ -3,6 +3,7 @@ package org.gangel.graphomance.vendor.neo4j
 import org.gangel.graphomance.api.NodeIdentifier
 import org.gangel.graphomance.api.ObjectApi
 import org.gangel.graphomance.api.RelationIdentifier
+import org.neo4j.driver.QueryRunner
 import org.neo4j.driver.Transaction
 
 class NeoObjectApi internal constructor(private val session: NeoSession) : ObjectApi {
@@ -33,7 +34,7 @@ class NeoObjectApi internal constructor(private val session: NeoSession) : Objec
     }
 
     override fun createNode(className: String, properties: Map<String, Any>): NodeIdentifier {
-        return session.neo4jSession.run("""
+        return getQueryRunner().run("""
             create (n:`$className` ${'$'}map) 
             return ID(n) as ident
         """.trimIndent(), mapOf("map" to properties)).single().let {
@@ -46,14 +47,15 @@ class NeoObjectApi internal constructor(private val session: NeoSession) : Objec
     }
 
     override fun createRelation(typeName: String, fromNode: NodeIdentifier, toNode: NodeIdentifier, properties: Map<String, Any>): RelationIdentifier {
-        return session.neo4jSession.run("""
+        val query = """
             match (a), (b)
             where ID(a)=${'$'}fromNode and ID(b)=${'$'}toNode
-            create (a)-[r:`$typeName`]->(b) RETURN ID(r) 
+            create (a)-[r:`$typeName`]->(b) 
             return ID(r) as ident
-        """.trimIndent(), mapOf("map" to properties)).single().let {
-            NeoIdentifier(it.get("ident").asLong())
-        }
+        """.trimIndent()
+        return getQueryRunner().run(query, mapOf("map" to properties, "fromNode" to NeoIdentifier.toLong(fromNode), "toNode" to NeoIdentifier.toLong(toNode))).single().let {
+                    NeoIdentifier(it.get("ident").asLong())
+                }
     }
 
     override fun updateRelation(clsName: String, edgeId: RelationIdentifier, properties: Map<String, Any>) {
@@ -61,11 +63,17 @@ class NeoObjectApi internal constructor(private val session: NeoSession) : Objec
     }
 
     override fun deleteAllNodes(className: String) {
-        session.neo4jSession.run("match (n:`$className`) delete n").consume()
+        getQueryRunner().run("match (n:`$className`) delete n").consume()
     }
 
     override fun deleteAllRelations(typeName: String) {
-        session.neo4jSession.run("match ()-[r:`$typeName`]->() delete r").consume()
+        getQueryRunner().run("match ()-[r:`$typeName`]->() delete r").consume()
     }
+
+    override fun cleanDatabase() {
+        getQueryRunner().run("match (n) detach delete n")
+    }
+
+    private fun getQueryRunner(): QueryRunner = tx ?: session.neo4jSession
 
 }
