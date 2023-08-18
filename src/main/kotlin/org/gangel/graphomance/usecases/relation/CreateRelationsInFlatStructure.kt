@@ -51,7 +51,7 @@ class CreateRelationsInFlatStructure :
         System.out.printf("Created edges in test: %d\n", count)
 
         // verify results
-        val createdEdges = schemaApi!!.countObjects(ROADTO_CLASS)
+        val createdEdges = schemaApi.countObjects(ROADTO_CLASS)
         Assertions.assertThat(createdEdges)
                 .isEqualTo(count)
                 .describedAs("Number of created edges should be as expected")

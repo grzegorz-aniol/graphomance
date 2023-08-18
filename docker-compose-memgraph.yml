@@ -1,0 +1,14 @@
+services:
+  memgraph:
+    image: memgraph/memgraph-platform:2.10.0-memgraph2.10.0-lab2.8.0
+    ports:
+      - 7687:7687
+      - 3000:3000
+      - 7444:7444
+    environment:
+      - MEMGRAPH=--bolt-server-name-for-init=Neo4j/ --telemetry-enabled=false
+    volumes:
+      - ./data/memgraph/mg_lib:/var/lib/memgraph
+      - ./data/memgraph/mg_log:/var/log/memgraph
+      - ./data/memgraph/mg_etc:/etc/memgraph
+    entrypoint: ["/usr/bin/supervisord"]

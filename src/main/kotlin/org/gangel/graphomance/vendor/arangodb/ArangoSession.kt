@@ -2,6 +2,7 @@ package org.gangel.graphomance.vendor.arangodb
 
 import com.arangodb.ArangoDatabase
 import org.gangel.graphomance.api.ObjectApi
+import org.gangel.graphomance.api.Result
 import org.gangel.graphomance.api.SchemaApi
 import org.gangel.graphomance.api.Session
 import org.gangel.graphomance.metrics.ObjectApiMetricsWrapper
@@ -18,6 +19,10 @@ class ArangoSession(
 
 	override fun objectApi(): ObjectApi {
 		return ObjectApiMetricsWrapper.create(ArangoObjectApi(db = db))
+	}
+
+	override fun runQuery(query: String, parameters: Map<String, Any>): Result {
+		TODO("Not yet implemented")
 	}
 
 }

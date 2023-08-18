@@ -12,6 +12,7 @@ import org.gangel.graphomance.metrics.TimeGauge
 import org.gangel.graphomance.usecases.CreateBasicRelationTest
 import org.gangel.graphomance.usecases.TestBase
 import org.gangel.graphomance.usecases.node.CreateSingleVertex
+import org.gangel.graphomance.usecases.pole.CrimeTotals
 import org.gangel.graphomance.usecases.relation.CreateRelationsInFlatStructure
 import org.gangel.graphomance.usecases.relation.CreateRelationsInStarStructure
 import org.gangel.graphomance.vendor.arangodb.ArangoConnectionProducer
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
 
 object TestLauncher {
-	const val BREAKE_LINE = "\n-------------------------------------------------------------------\n"
+	private const val BREAK_LINE = "\n-------------------------------------------------------------------\n"
 
 	@JvmStatic
 	fun main(args: Array<String>) {
@@ -45,9 +46,12 @@ object TestLauncher {
 						   .required(false)
 						   .hasArg()
 						   .build())
+		opts.addOption(Option.builder()
+			.longOpt("tests")
+			.numberOfArgs(Option.UNLIMITED_VALUES)
+			.required(false).build())
 		val parser: CommandLineParser = DefaultParser()
-		val line: CommandLine
-		line = try {
+		val line: CommandLine = try {
 			parser.parse(opts, args)
 		} catch (e: ParseException) {
 			System.err.println(e.message)
@@ -61,27 +65,28 @@ object TestLauncher {
 		val dbUrlOrPath = line.getOptionValue("u")
 		val dbName = line.getOptionValue("n")
 		val dbKind = line.getOptionValue("t")
-		val dbType: DbType = DbType.Companion.of(dbKind)
-		if (dbType == null) {
-			System.err.println("Unknown database type")
-			return
-		}
-		if (dbType == DbType.NEO4J) {
-			val connProducer = NeoConnectionProducer()
-			val connSetup = NeoConnectionSettings(dbPath = dbUrlOrPath)
-			connection = connProducer.connect(connSetup)
-			sessionProducer = connProducer
-		} else if (dbType == DbType.ARANGODB) {
-			Objects.requireNonNull(dbName, "Database name for ArangoDB is required!")
-			val connProducer: ConnectionProducer = ArangoConnectionProducer()
-			val connSettings = ArangoConnectionSettings(dbName = dbName,
-				user = "root",
-				password = "admin")
-			connection = connProducer.connect(connSettings)
-			sessionProducer = ArangoSessionProducer()
-		} else {
-			System.err.println("Unsupported database type")
-			return
+		val testNames = line.getOptionValues("tests")?.toSet()?.takeIf { it.isNotEmpty() }
+		val dbType: DbType = DbType.of(dbKind)
+		when (dbType) {
+			DbType.NEO4J -> {
+				val connProducer = NeoConnectionProducer()
+				val connSetup = NeoConnectionSettings(dbPath = dbUrlOrPath)
+				connection = connProducer.connect(connSetup)
+				sessionProducer = connProducer
+			}
+			DbType.ARANGODB -> {
+				Objects.requireNonNull(dbName, "Database name for ArangoDB is required!")
+				val connProducer: ConnectionProducer = ArangoConnectionProducer()
+				val connSettings = ArangoConnectionSettings(dbName = dbName,
+					user = "root",
+					password = "admin")
+				connection = connProducer.connect(connSettings)
+				sessionProducer = ArangoSessionProducer()
+			}
+			else -> {
+				System.err.println("Unsupported database type")
+				return
+			}
 		}
 		val csvReporter = CsvReporter.forRegistry(SharedMetricRegistries.getDefault())
 			.convertRatesTo(TimeUnit.SECONDS)
@@ -106,11 +111,14 @@ object TestLauncher {
 			CreateBasicRelationTest(),
 			CreateSingleVertex(),
 			CreateRelationsInFlatStructure(),
-			CreateRelationsInStarStructure()
-		)
+			CreateRelationsInStarStructure(),
+			CrimeTotals()
+		).filter {
+			testNames?.contains(it.javaClass.simpleName) ?: false
+		}
 		System.out.printf("Starting with database: %s\n", dbType.toString())
 		allTests.forEach(Consumer { test: TestBase ->
-			System.out.printf(BREAKE_LINE)
+			System.out.printf(BREAK_LINE)
 			if (test.skipFor(dbType)) {
 				System.out.printf("Skipping test '%s'\n",
 								  test.javaClass.simpleName)
