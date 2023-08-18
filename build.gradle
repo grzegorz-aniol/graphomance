@@ -1,3 +1,5 @@
+
+
 plugins {
     id 'net.researchgate.release' version '2.8.1'
     // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
@@ -21,6 +23,7 @@ dependencies {
     implementation group: 'com.arangodb', name: 'arangodb-java-driver', version: arangoApiVersion
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.assertj:assertj-core:3.11.1'
+    implementation 'org.reflections:reflections:0.10.2'
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
@@ -45,15 +48,4 @@ java {
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
 }

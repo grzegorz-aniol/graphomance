@@ -24,6 +24,11 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.function.Consumer
+import org.reflections.Reflections
+import org.reflections.scanners.SubTypesScanner
+import org.reflections.util.ClasspathHelper
+import org.reflections.util.ConfigurationBuilder
+import org.reflections.util.FilterBuilder
 
 object TestLauncher {
 	private const val BREAK_LINE = "\n-------------------------------------------------------------------\n"
@@ -31,24 +36,25 @@ object TestLauncher {
 	@JvmStatic
 	fun main(args: Array<String>) {
 		val opts = Options()
-		opts.addOption(Option.builder("t")
-						   .longOpt("type")
+		opts.addOption(Option.builder("p")
+						   .longOpt("provider")
 						   .required()
 						   .hasArg()
 						   .build())
-		opts.addOption(Option.builder("u")
-						   .longOpt("dburl")
+		opts.addOption(Option.builder("h")
+						   .longOpt("host")
 						   .required()
 						   .hasArg()
 						   .build())
-		opts.addOption(Option.builder("n")
+		opts.addOption(Option.builder("d")
 						   .longOpt("dbname")
 						   .required(false)
 						   .hasArg()
 						   .build())
-		opts.addOption(Option.builder()
+		opts.addOption(Option.builder("t")
 			.longOpt("tests")
-			.numberOfArgs(Option.UNLIMITED_VALUES)
+			.required(false)
+			.hasArg()
 			.required(false).build())
 		val parser: CommandLineParser = DefaultParser()
 		val line: CommandLine = try {
@@ -62,10 +68,10 @@ object TestLauncher {
 		Metrics.init()
 		val connection: Connection
 		val sessionProducer: SessionProducer
-		val dbUrlOrPath = line.getOptionValue("u")
-		val dbName = line.getOptionValue("n")
-		val dbKind = line.getOptionValue("t")
-		val testNames = line.getOptionValues("tests")?.toSet()?.takeIf { it.isNotEmpty() }
+		val dbUrlOrPath = line.getOptionValue("h")
+		val dbName = line.getOptionValue("d")
+		val dbKind = line.getOptionValue("p")
+		val testNames = line.getOptionValue("t")?.split(",")?.toSet()
 		val dbType: DbType = DbType.of(dbKind)
 		when (dbType) {
 			DbType.NEO4J -> {
@@ -97,27 +103,18 @@ object TestLauncher {
 			.formattedFor(Locale.US)
 			.disabledMetricAttributes(setOf(MetricAttribute.STDDEV,
 											 MetricAttribute.P50,
-											 MetricAttribute.P75,
 											 MetricAttribute.P95,
-											 MetricAttribute.P98,
-											 MetricAttribute.P999,
+											 MetricAttribute.P99,
+											 MetricAttribute.MAX,
 											 MetricAttribute.M1_RATE,
 											 MetricAttribute.M5_RATE,
 											 MetricAttribute.M15_RATE))
 			.convertRatesTo(TimeUnit.SECONDS)
 			.convertDurationsTo(TimeUnit.MICROSECONDS)
 			.build()
-		val allTests = listOf(
-			CreateBasicRelationTest(),
-			CreateSingleVertex(),
-			CreateRelationsInFlatStructure(),
-			CreateRelationsInStarStructure(),
-			CrimeTotals()
-		).filter {
-			testNames?.contains(it.javaClass.simpleName) ?: false
-		}
+		val allTests = getFilteredTestObjects(testNames)
 		System.out.printf("Starting with database: %s\n", dbType.toString())
-		allTests.forEach(Consumer { test: TestBase ->
+		allTests.forEach(Consumer { test: TestCase ->
 			System.out.printf(BREAK_LINE)
 			if (test.skipFor(dbType)) {
 				System.out.printf("Skipping test '%s'\n",
@@ -140,7 +137,7 @@ object TestLauncher {
 		t.stop()
 	}
 
-	private fun runTest(test: TestBase, connection: Connection, sessionProducer: SessionProducer) {
+	private fun runTest(test: TestCase, connection: Connection, sessionProducer: SessionProducer) {
 		val createNewSession: ()->Session = { sessionProducer.createSession(connection) }
 		try {
 			val testName = test.javaClass.simpleName
@@ -153,7 +150,8 @@ object TestLauncher {
 				test.createTestData(createNewSession())
 			}
 			val timer = StopWatch.createStarted()
-			val stages = test.stages
+			// TODO: design different approach for stages
+			val stages = (test as? TestBase)?.stages ?: mapOf("test" to { session -> test.performTest(session) })
 			var stageNum = 0
 			stages.forEach { (stageName, action) ->
 				++stageNum
@@ -169,5 +167,32 @@ object TestLauncher {
 			println("Test error: " + e.message)
 			e.printStackTrace()
 		}
+	}
+
+	private fun findTestClasses(): List<Class<out TestBase>> {
+		val packagePath = "org.gangel.graphomance"
+		val reflections =
+			Reflections(
+				ConfigurationBuilder()
+					.filterInputsBy(FilterBuilder().includePackage(packagePath))
+					.setUrls(ClasspathHelper.forPackage(packagePath))
+					.setScanners(SubTypesScanner(false))
+			)
+		val typeList = reflections.getSubTypesOf(TestBase::class.java)
+		return typeList.toList()
+	}
+
+	private fun getFilteredTestObjects(testNames: Set<String>?): List<TestCase> {
+		val allClasses = findTestClasses()
+		val filteredClasses =  if (testNames == null) {
+			allClasses
+		} else {
+			allClasses.filter { testNames.contains(it.simpleName) }
+		}
+		val testObjects = filteredClasses.mapNotNull { it.newInstance() }
+		testObjects.forEach {
+			println("Test ${it::class.simpleName}")
+		}
+		return testObjects;
 	}
 }

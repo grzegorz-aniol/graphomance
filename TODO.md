@@ -1,4 +1,7 @@
 
+* load pole dataset to newly created container
+`bin/cypher-shell -u neo4j -d pole -f /import/pole/neo4j-load.cypher`
+
 
 Usecases to implement:
 
