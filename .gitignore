@@ -34,3 +34,4 @@ proguard/
 build/
 bin/
 /data/
+/.env
