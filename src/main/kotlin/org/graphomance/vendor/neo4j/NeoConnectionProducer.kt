@@ -10,7 +10,10 @@ class NeoConnectionProducer : org.graphomance.api.ConnectionProducer, SessionPro
 		if (settings !is NeoConnectionSettings)
 			throw RuntimeException("Requiring Neo4j connection settings")
 		val opts: NeoConnectionSettings = settings
-		return NeoConnection(GraphDatabase.driver(opts.dbPath, AuthTokens.basic("neo4j", "password")))
+		return NeoConnection(
+			driver = GraphDatabase.driver(opts.dbPath, AuthTokens.basic("neo4j", "password")),
+			dbName = opts.dbName
+		)
 	}
 
 	override fun createSession(connection: org.graphomance.api.Connection): Session {
