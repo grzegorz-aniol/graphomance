@@ -2,6 +2,9 @@
 * load pole dataset to newly created container
 `bin/cypher-shell -u neo4j -d pole -f /import/pole/neo4j-load.cypher`
 
+# load pole dataset to memgraph
+`docker exec -it graphomance-memgraph-1 /bin/bash -c 'mgconsole < /datasets/pole/memgraph-load.cypher'
+`
 
 Usecases to implement:
 

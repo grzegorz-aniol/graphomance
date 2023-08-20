@@ -23,4 +23,4 @@ services:
       - ./data/neo4j5/data:/data
       - ./data/neo4j5/plugins:/plugins
       - ./data/neo4j5/backup:/backup
-      - ./datasets/pole:/import/pole
+      - ./datasets/pole:/import/datasets/pole

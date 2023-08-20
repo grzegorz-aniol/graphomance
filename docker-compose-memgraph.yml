@@ -6,9 +6,10 @@ services:
       - 3000:3000
       - 7444:7444
     environment:
-      - MEMGRAPH=--bolt-server-name-for-init=Neo4j/ --telemetry-enabled=false
+      - MEMGRAPH=--bolt-server-name-for-init=Neo4j/ --telemetry-enabled=false --storage-properties-on-edges=true
     volumes:
       - ./data/memgraph/mg_lib:/var/lib/memgraph
       - ./data/memgraph/mg_log:/var/log/memgraph
       - ./data/memgraph/mg_etc:/etc/memgraph
+      - ./datasets/pole:/datasets/pole
     entrypoint: ["/usr/bin/supervisord"]
