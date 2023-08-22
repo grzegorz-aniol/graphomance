@@ -1,6 +1,7 @@
 package org.graphomance.vendor.arangodb
 
 import com.arangodb.ArangoDatabase
+import org.graphomance.api.DbType
 import org.graphomance.api.ObjectApi
 import org.graphomance.api.Result
 import org.graphomance.api.SchemaApi
@@ -24,5 +25,7 @@ class ArangoSession(
 	override fun runQuery(query: String, parameters: Map<String, Any>): Result {
 		TODO("Not yet implemented")
 	}
+
+	override fun getDbType() = DbType.ARANGODB
 
 }

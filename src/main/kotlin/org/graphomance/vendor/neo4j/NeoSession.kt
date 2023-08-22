@@ -1,5 +1,6 @@
 package org.graphomance.vendor.neo4j
 
+import org.graphomance.api.DbType
 import org.graphomance.api.ObjectApi
 import org.graphomance.api.Result
 import org.graphomance.api.Row
@@ -10,6 +11,7 @@ import org.graphomance.metrics.ObjectApiMetricsWrapper
 
 internal class NeoSession(
     val connection: NeoConnection,
+    private val dbType: DbType
 ) : Session {
 
     val neo4jSession: org.neo4j.driver.Session = connection.session()
@@ -27,6 +29,8 @@ internal class NeoSession(
                 }.toList()
         )
     }
+
+    override fun getDbType() = dbType
 
     init {
         schemaApi = NeoSchemaApi(this)

@@ -2,6 +2,7 @@ package org.graphomance.engine
 
 import java.util.Objects
 import org.graphomance.api.Connection
+import org.graphomance.api.DbType
 import org.graphomance.api.Session
 import org.graphomance.api.SessionProducer
 import org.graphomance.vendor.arangodb.ArangoConnectionProducer
@@ -36,16 +37,15 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
     }
 
     private fun setupDbConnectionProvider() {
-        val dbType: org.graphomance.api.DbType = org.graphomance.api.DbType.of(dbType)
+        val dbType= DbType.of(dbType)
         when (dbType) {
-            org.graphomance.api.DbType.NEO4J -> {
-                val connProducer = NeoConnectionProducer()
+            DbType.NEO4J, DbType.MEMGRAPH -> {
+                val connProducer = NeoConnectionProducer(dbType)
                 val connSetup = NeoConnectionSettings(dbPath = hostUrl, dbName = dbName)
                 connection = connProducer.connect(connSetup)
                 sessionProducer = connProducer
             }
-
-            org.graphomance.api.DbType.ARANGODB -> {
+            DbType.ARANGODB -> {
                 Objects.requireNonNull(dbName, "Database name for ArangoDB is required!")
                 val connProducer: org.graphomance.api.ConnectionProducer = ArangoConnectionProducer()
                 val connSettings = ArangoConnectionSettings(
@@ -56,11 +56,7 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
                 connection = connProducer.connect(connSettings)
                 sessionProducer = ArangoSessionProducer()
             }
-
-            else -> {
-                System.err.println("Unsupported database type")
-                return
-            }
+            else -> throw RuntimeException("Unsupported database type")
         }
     }
 

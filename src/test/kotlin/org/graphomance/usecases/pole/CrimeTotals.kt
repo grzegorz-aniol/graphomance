@@ -11,7 +11,7 @@ class CrimeTotals : PoleTestBase() {
             """
             MATCH (c:Crime)
             RETURN c.type AS crime_type, count(c) AS total
-            ORDER BY count(c) DESC
+            ORDER BY total DESC
         """.trimIndent()
         ).rows.toList()
         assert(result.isNotEmpty()) { "Result should not be empty" }

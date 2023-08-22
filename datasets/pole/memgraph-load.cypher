@@ -22,8 +22,8 @@ load csv from '/datasets/pole/pole.nodes.Location.csv' with header as row
 create (n:Location)
 set n.id=row.`:ID`,
 n.address=row.address,
-n.latitude=toFloat(row.`latitude:double`),
-n.longitude=toFloat(row.`longitude:double`),
+n.lat=toFloat(row.`latitude:double`),
+n.lng=toFloat(row.`longitude:double`),
 n.postcode=row.postcode
 return count(*);
 
@@ -186,3 +186,7 @@ load csv from '/datasets/pole/pole.relationships.INVOLVED_IN.csv' with header as
 match (n1:Object {id: row.`:START_ID`}), (n2:Crime {id: row.`:END_ID`})
 merge (n1)-[:INVOLVED_IN]->(n2)
 return count(*);
+
+return 'Additional indexes';
+
+create index on :Location(address);

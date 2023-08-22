@@ -170,3 +170,7 @@ load csv with headers from 'file:///datasets/pole/pole.relationships.INVOLVED_IN
 match (n1:Object {id: row.`:START_ID`}), (n2:Crime {id: row.`:END_ID`})
 merge (n1)-[:INVOLVED_IN]->(n2)
 return count(*);
+
+return 'Additional indexes';
+
+create index for (n:Location) ON (n.address);

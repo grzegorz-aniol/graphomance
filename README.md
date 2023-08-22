@@ -20,3 +20,11 @@ This is crime investigation dataset, containing street-level crime in Greater Ma
 
 POLE stands for Person, Object, Location and Event. Dataset contains 62177 nodes and 105840 relationships.
 
+## Graph database differences
+
+### Differences between Cypher implementation in Neo4j and Memgraph 
+
+* Properties on edged are disabled by default. You have run Memgraph with explicit setting `--storage-properties-on-edges=true`
+* POINT type is not supported in Memgraph, in which geolocation should be stored in the node with properties `lng` and `lat`
+* LOAD CSV syntax is very similar, however different:
+** file name following `WITH HEADER` (memgraph) vs opposite place, `WITH HEADERS` following file name  (Neo4j)

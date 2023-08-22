@@ -7,4 +7,5 @@ interface Session : AutoCloseable, Closeable {
 	fun schemaApi(): SchemaApi
 	fun objectApi(): ObjectApi
 	fun runQuery(query: String, parameters: Map<String, Any> = emptyMap()): Result
+	fun getDbType() : DbType
 }
