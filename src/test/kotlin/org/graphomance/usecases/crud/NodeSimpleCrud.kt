@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestMethodOrder
 
-@GraphomanceTest(customDatabaseName = "pole", dbTargets = [DbType.NEO4J, DbType.MEMGRAPH])
+@GraphomanceTest(dbTargets = [DbType.NEO4J, DbType.MEMGRAPH])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class NodeSimpleCrud {

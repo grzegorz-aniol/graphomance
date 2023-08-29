@@ -26,6 +26,7 @@ POLE stands for Person, Object, Location and Event. Dataset contains 62177 nodes
 
 ### Loading POLE dataset to Neo4j
 
+> docker exec -it graphomance-neo4j5-1 bin/cypher-shell -u neo4j -p password -d neo4j 'create database pole;'
 > docker exec -it graphomance-neo4j5-1 bin/cypher-shell -u neo4j -p password -d pole -f /import/datasets/pole/neo4j-load.cypher
 
 ## Running test

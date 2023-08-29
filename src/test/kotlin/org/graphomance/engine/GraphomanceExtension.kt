@@ -36,12 +36,11 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
         dbName = getParameters("DB_NAME")
     }
 
-    private fun setupDbConnectionProvider() {
-        val dbType= DbType.of(dbType)
-        when (dbType) {
+    private fun setupDbConnectionProvider(customDatabaseName: String?) {
+        when (val dbType= DbType.of(dbType)) {
             DbType.NEO4J, DbType.MEMGRAPH -> {
                 val connProducer = NeoConnectionProducer(dbType)
-                val connSetup = NeoConnectionSettings(dbPath = hostUrl, dbName = dbName)
+                val connSetup = NeoConnectionSettings(dbPath = hostUrl, dbName = customDatabaseName ?: dbName ?: "neo4j")
                 connection = connProducer.connect(connSetup)
                 sessionProducer = connProducer
             }
@@ -63,11 +62,27 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
     private fun createSession() = sessionProducer.createSession(connection)
 
     override fun beforeAll(context: ExtensionContext) {
-        setupDbConnectionProvider()
+        val cls = context.requiredTestClass
+        val annotation = findAnnotation(cls, GraphomanceTest::class.java)
+
+        val customDatabaseName = annotation?.customDatabaseName?.takeIf { it.isNotBlank() }
+        setupDbConnectionProvider(customDatabaseName)
+    }
+
+    private fun <T> findAnnotation(cls: Class<*>, annotation: Class<T>): T? {
+        val graphomanceTestAnnotation = cls.annotations.filterIsInstance(annotation).firstOrNull()
+        if (graphomanceTestAnnotation != null) {
+            return graphomanceTestAnnotation
+        }
+        val s = cls.superclass
+        if (s != Nothing::class.java && s != Any::class.java) {
+            return findAnnotation(s, annotation)
+        }
+        return null
     }
 
     private fun getParameters(key: String): String? {
-        return System.getProperty(key) ?: System.getenv(key)
+        return System.getProperty(key)?.takeIf { it.isNotBlank() } ?: System.getenv(key)?.takeIf { it.isNotBlank() }
     }
 
     override fun beforeEach(context: ExtensionContext) {
