@@ -20,6 +20,21 @@ This is crime investigation dataset, containing street-level crime in Greater Ma
 
 POLE stands for Person, Object, Location and Event. Dataset contains 62177 nodes and 105840 relationships.
 
+### Loading POLE dataset to Memgraph
+
+> docker exec -it graphomance-memgraph-1 /bin/bash -c 'mgconsole < /datasets/pole/memgraph-load.cypher'
+
+### Loading POLE dataset to Neo4j
+
+> docker exec -it graphomance-neo4j5-1 bin/cypher-shell -u neo4j -p password -d pole -f /import/datasets/pole/neo4j-load.cypher
+
+## Running test
+
+Following command runs all available tests:
+> DB_TYPE=<DB_TYPE> URL=bolt://localhost:7687 gradle test -i --rerun
+
+Replace DB_TYPE with one of possible db providers: NEO4J, MEMGRAPH
+
 ## Graph database differences
 
 ### Differences between Cypher implementation in Neo4j and Memgraph 

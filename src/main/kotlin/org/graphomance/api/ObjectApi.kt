@@ -11,11 +11,24 @@ interface ObjectApi {
 
     fun updateNode(className: String, nodeId: NodeIdentifier, properties: Map<String, Any>)
 
-    fun createRelation(typeName: String, fromNode: NodeIdentifier, toNode: NodeIdentifier, properties: Map<String, Any> = emptyMap()): RelationIdentifier
+    fun deleteNode(className: String, nodeId: NodeIdentifier)
 
-    fun updateRelation(typeName: String, edgeId: RelationIdentifier, properties: Map<String, Any>)
+    fun createRelationship(
+        typeName: String,
+        fromNode: NodeIdentifier,
+        toNode: NodeIdentifier,
+        properties: Map<String, Any> = emptyMap()
+    ): RelationshipIdentifier
+
+    fun updateRelationship(
+        typeName: String,
+        relationshipIdentifier: RelationshipIdentifier,
+        properties: Map<String, Any>
+    )
+
+    fun deleteRelationship(typeName: String, relationshipIdentifier: RelationshipIdentifier)
 
     fun deleteAllNodes(className: String)
-    fun deleteAllRelations(typeName: String)
+    fun deleteAllRelationships(typeName: String)
     fun cleanDatabase()
 }

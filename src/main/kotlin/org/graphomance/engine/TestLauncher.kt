@@ -8,7 +8,6 @@ import java.io.File
 import java.util.Locale
 import java.util.Objects
 import java.util.concurrent.TimeUnit
-import java.util.function.Consumer
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.CommandLineParser
 import org.apache.commons.cli.DefaultParser
@@ -22,17 +21,11 @@ import org.graphomance.api.SessionProducer
 import org.graphomance.api.TestCase
 import org.graphomance.metrics.Metrics
 import org.graphomance.metrics.TimeGauge
-import org.graphomance.usecases.TestBase
 import org.graphomance.vendor.arangodb.ArangoConnectionProducer
 import org.graphomance.vendor.arangodb.ArangoConnectionSettings
 import org.graphomance.vendor.arangodb.ArangoSessionProducer
 import org.graphomance.vendor.neo4j.NeoConnectionProducer
 import org.graphomance.vendor.neo4j.NeoConnectionSettings
-import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
-import org.reflections.util.ClasspathHelper
-import org.reflections.util.ConfigurationBuilder
-import org.reflections.util.FilterBuilder
 
 object TestLauncher {
 	private const val BREAK_LINE = "\n-------------------------------------------------------------------\n"
@@ -71,18 +64,15 @@ object TestLauncher {
 		}
 		Metrics.init()
 		val connection: org.graphomance.api.Connection
-		val sessionProducer: SessionProducer
 		val dbUrlOrPath = line.getOptionValue("h")
 		val dbName = line.getOptionValue("d")
 		val dbKind = line.getOptionValue("p")
-		val testNames = line.getOptionValue("t")?.split(",")?.toSet()
 		val dbType: org.graphomance.api.DbType = org.graphomance.api.DbType.of(dbKind)
 		when (dbType) {
 			org.graphomance.api.DbType.NEO4J -> {
 				val connProducer = NeoConnectionProducer()
 				val connSetup = NeoConnectionSettings(dbPath = dbUrlOrPath)
 				connection = connProducer.connect(connSetup)
-				sessionProducer = connProducer
 			}
 			org.graphomance.api.DbType.ARANGODB -> {
 				Objects.requireNonNull(dbName, "Database name for ArangoDB is required!")
@@ -91,7 +81,6 @@ object TestLauncher {
 					user = "root",
 					password = "admin")
 				connection = connProducer.connect(connSettings)
-				sessionProducer = ArangoSessionProducer()
 			}
 			else -> {
 				System.err.println("Unsupported database type")
@@ -116,17 +105,6 @@ object TestLauncher {
 			.convertRatesTo(TimeUnit.SECONDS)
 			.convertDurationsTo(TimeUnit.MICROSECONDS)
 			.build()
-		val allTests = getFilteredTestObjects(testNames)
-		System.out.printf("Starting with database: %s\n", dbType.toString())
-		allTests.forEach(Consumer { test: TestCase ->
-			System.out.printf(BREAK_LINE)
-			if (test.skipFor(dbType)) {
-				System.out.printf("Skipping test '%s'\n",
-								  test.javaClass.simpleName)
-			} else {
-				runTest(test, connection, sessionProducer)
-			}
-		})
 		connection.close()
 		reporter.report()
 		csvReporter.report()
@@ -154,14 +132,9 @@ object TestLauncher {
 				test.createTestData(createNewSession())
 			}
 			val timer = StopWatch.createStarted()
-			// TODO: design different approach for stages
-			val stages = (test as? TestBase)?.stages ?: mapOf("test" to { session -> test.performTest(session) })
-			var stageNum = 0
-			stages.forEach { (stageName, action) ->
-				++stageNum
-				System.out.printf(" > running test stage %d - %s..\n", stageNum, stageName)
-				addNewMetric(testName, stageName) { action(createNewSession()) }
-			}
+
+			//NOP
+
 			timer.stop()
 			println("Test done. Time: $timer")
 			println("Cleaning up...")
@@ -173,30 +146,4 @@ object TestLauncher {
 		}
 	}
 
-	private fun findTestClasses(): List<Class<out TestBase>> {
-		val packagePath = "org.graphomance"
-		val reflections =
-			Reflections(
-				ConfigurationBuilder()
-					.filterInputsBy(FilterBuilder().includePackage(packagePath))
-					.setUrls(ClasspathHelper.forPackage(packagePath))
-					.setScanners(SubTypesScanner(false))
-			)
-		val typeList = reflections.getSubTypesOf(TestBase::class.java)
-		return typeList.toList()
-	}
-
-	private fun getFilteredTestObjects(testNames: Set<String>?): List<TestCase> {
-		val allClasses = findTestClasses()
-		val filteredClasses =  if (testNames == null) {
-			allClasses
-		} else {
-			allClasses.filter { testNames.contains(it.simpleName) }
-		}
-		val testObjects = filteredClasses.mapNotNull { it.newInstance() }
-		testObjects.forEach {
-			println("Test ${it::class.simpleName}")
-		}
-		return testObjects;
-	}
 }
