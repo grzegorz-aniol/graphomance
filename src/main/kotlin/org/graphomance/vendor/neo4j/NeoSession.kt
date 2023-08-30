@@ -24,9 +24,11 @@ internal class NeoSession(
     override fun runQuery(query: String, parameters: Map<String, Any>): Result {
         return Result(
             rows = neo4jSession.run(query, parameters).stream().map { record ->
-                    Row(values = Values(data = record.fields()
-                        .associate { v -> v.key() to v.value().asObject() }))
-                }.toList()
+                Row(
+                    values = Values(data = record.fields()
+                        .associate { v -> v.key() to v.value().asObject() })
+                )
+            }.toList()
         )
     }
 

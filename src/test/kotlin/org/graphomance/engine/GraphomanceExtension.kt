@@ -1,6 +1,8 @@
 package org.graphomance.engine
 
+import com.codahale.metrics.Timer
 import java.util.Objects
+import java.util.concurrent.TimeUnit
 import org.graphomance.api.Connection
 import org.graphomance.api.DbType
 import org.graphomance.api.Session
@@ -11,6 +13,7 @@ import org.graphomance.vendor.arangodb.ArangoSessionProducer
 import org.graphomance.vendor.neo4j.NeoConnectionProducer
 import org.graphomance.vendor.neo4j.NeoConnectionSettings
 import org.junit.jupiter.api.RepeatedTest
+import org.junit.jupiter.api.extension.AfterAllCallback
 import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
@@ -21,7 +24,7 @@ import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
 
 class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestExecutionCallback,
-    AfterEachCallback, AfterTestExecutionCallback, ParameterResolver {
+    AfterEachCallback, AfterTestExecutionCallback, AfterAllCallback, ParameterResolver {
 
     private var dbName: String?
     private var hostUrl: String
@@ -36,31 +39,6 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
         dbName = getParameters("DB_NAME")
     }
 
-    private fun setupDbConnectionProvider(customDatabaseName: String?) {
-        when (val dbType= DbType.of(dbType)) {
-            DbType.NEO4J, DbType.MEMGRAPH -> {
-                val connProducer = NeoConnectionProducer(dbType)
-                val connSetup = NeoConnectionSettings(dbPath = hostUrl, dbName = customDatabaseName ?: dbName ?: "neo4j")
-                connection = connProducer.connect(connSetup)
-                sessionProducer = connProducer
-            }
-            DbType.ARANGODB -> {
-                Objects.requireNonNull(dbName, "Database name for ArangoDB is required!")
-                val connProducer: org.graphomance.api.ConnectionProducer = ArangoConnectionProducer()
-                val connSettings = ArangoConnectionSettings(
-                    dbName = "dbName",
-                    user = "root",
-                    password = "admin"
-                )
-                connection = connProducer.connect(connSettings)
-                sessionProducer = ArangoSessionProducer()
-            }
-            else -> throw RuntimeException("Unsupported database type")
-        }
-    }
-
-    private fun createSession() = sessionProducer.createSession(connection)
-
     override fun beforeAll(context: ExtensionContext) {
         val cls = context.requiredTestClass
         val annotation = findAnnotation(cls, GraphomanceTest::class.java)
@@ -69,34 +47,19 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
         setupDbConnectionProvider(customDatabaseName)
     }
 
-    private fun <T> findAnnotation(cls: Class<*>, annotation: Class<T>): T? {
-        val graphomanceTestAnnotation = cls.annotations.filterIsInstance(annotation).firstOrNull()
-        if (graphomanceTestAnnotation != null) {
-            return graphomanceTestAnnotation
-        }
-        val s = cls.superclass
-        if (s != Nothing::class.java && s != Any::class.java) {
-            return findAnnotation(s, annotation)
-        }
-        return null
-    }
-
-    private fun getParameters(key: String): String? {
-        return System.getProperty(key)?.takeIf { it.isNotBlank() } ?: System.getenv(key)?.takeIf { it.isNotBlank() }
-    }
-
     override fun beforeEach(context: ExtensionContext) {
     }
 
     override fun beforeTestExecution(context: ExtensionContext) {
         val store = getParentStore(context)
+        val testClass = context.requiredTestClass
         val testMethod = context.requiredTestMethod
         var testCtx = store.get(testMethod) as? TestExecutionContext
         if (testCtx == null) {
             val repeatedTestAnnotation: RepeatedTest? = context.element
                 .map { it.annotations.filterIsInstance(RepeatedTest::class.java).firstOrNull() }
                 .orElse(null)
-            testCtx = TestExecutionContext()
+            testCtx = TestExecutionContext(MetricsService.registerTimeGaugeMetric(testClass.simpleName, testMethod.name))
             if (repeatedTestAnnotation != null) {
                 testCtx.expectedIterations = repeatedTestAnnotation.value
             }
@@ -109,13 +72,12 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
         val endTime = System.nanoTime()
         val store = getParentStore(context)
         val testCtx = store.get(context.requiredTestMethod) as TestExecutionContext
-        testCtx.totalTime += endTime - testCtx.startTime
-        testCtx.count += 1
+        testCtx.stop(endTime)
 
         val lastIteration = (testCtx.expectedIterations == testCtx.count)
         if (lastIteration) {
-            val totalTimeInSec = 1e-9 * testCtx.totalTime
-            val avgTimeInMs = (1e-6 * testCtx.totalTime) / testCtx.count
+            val totalTimeInSec = 1e-9 * testCtx.totalTimeNs
+            val avgTimeInMs = (1e-6 * testCtx.totalTimeNs) / testCtx.count
             println("Test: '${context.testMethod.get().name}', iterations: ${testCtx.count}, total time: $totalTimeInSec [s], avg time: $avgTimeInMs [ms]")
         }
     }
@@ -135,13 +97,67 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
         }
     }
 
-    private class TestExecutionContext {
-        var startTime: Long = 0
-        var totalTime: Long = 0
+    override fun afterAll(context: ExtensionContext?) {
+        MetricsService.reportMetrics()
+    }
+
+    private fun createSession() = sessionProducer.createSession(connection)
+
+    private fun setupDbConnectionProvider(customDatabaseName: String?) {
+        when (val dbType = DbType.of(dbType)) {
+            DbType.NEO4J, DbType.MEMGRAPH -> {
+                val connProducer = NeoConnectionProducer(dbType)
+                val connSetup =
+                    NeoConnectionSettings(dbPath = hostUrl, dbName = customDatabaseName ?: dbName ?: "neo4j")
+                connection = connProducer.connect(connSetup)
+                sessionProducer = connProducer
+            }
+
+            DbType.ARANGODB -> {
+                Objects.requireNonNull(dbName, "Database name for ArangoDB is required!")
+                val connProducer: org.graphomance.api.ConnectionProducer = ArangoConnectionProducer()
+                val connSettings = ArangoConnectionSettings(
+                    dbName = "dbName",
+                    user = "root",
+                    password = "admin"
+                )
+                connection = connProducer.connect(connSettings)
+                sessionProducer = ArangoSessionProducer()
+            }
+
+            else -> throw RuntimeException("Unsupported database type")
+        }
+    }
+
+    private fun <T> findAnnotation(cls: Class<*>, annotation: Class<T>): T? {
+        val graphomanceTestAnnotation = cls.annotations.filterIsInstance(annotation).firstOrNull()
+        if (graphomanceTestAnnotation != null) {
+            return graphomanceTestAnnotation
+        }
+        val s = cls.superclass
+        if (s != Nothing::class.java && s != Any::class.java) {
+            return findAnnotation(s, annotation)
+        }
+        return null
+    }
+
+    private fun getParameters(key: String): String? {
+        return System.getProperty(key)?.takeIf { it.isNotBlank() } ?: System.getenv(key)?.takeIf { it.isNotBlank() }
+    }
+
+    private class TestExecutionContext(val metric: Timer) {
+        var startTimeNs: Long = 0
+        var totalTimeNs: Long = 0
         var count = 0
         var expectedIterations: Int = 1
         fun start() {
-            startTime = System.nanoTime()
+            startTimeNs = System.nanoTime()
+            totalTimeNs = startTimeNs
+        }
+        fun stop(stopTimeNs: Long) {
+            totalTimeNs = stopTimeNs - startTimeNs
+            metric.update(totalTimeNs, TimeUnit.NANOSECONDS)
+            count += 1
         }
     }
 

@@ -25,7 +25,7 @@ class NeoObjectApi internal constructor(private val session: NeoSession) : Objec
         tx = null
     }
 
-    override fun getNode(clsName: String, nodeId: NodeIdentifier): Any? {
+    override fun getNode(className: String, nodeId: NodeIdentifier): Any? {
         return null
     }
 

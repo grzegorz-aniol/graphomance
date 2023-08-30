@@ -6,7 +6,7 @@ class TestLimit(private val maxIterations: Long,
 	private val minDuration: Duration,
 	private val maxDuration: Duration
 ) {
-	private val startTime: Long
+	private val startTime: Long = System.currentTimeMillis()
 	private var cnt: Long = 0
 	private val warmUpIterations: Long = 10
 	fun increment() {
@@ -21,7 +21,4 @@ class TestLimit(private val maxIterations: Long,
 			false
 		} else cnt + warmUpIterations >= maxIterations || System.currentTimeMillis() - startTime >= maxDuration.toMillis()
 
-	init {
-		startTime = System.currentTimeMillis()
-	}
 }
