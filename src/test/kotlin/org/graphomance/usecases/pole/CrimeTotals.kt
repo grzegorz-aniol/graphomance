@@ -1,20 +1,23 @@
 package org.graphomance.usecases.pole
 
 import org.graphomance.api.Session
-import org.junit.jupiter.api.RepeatedTest
+import org.graphomance.engine.TestTimer
+import org.junit.jupiter.api.Test
 
 class CrimeTotals : PoleTestBase() {
 
-    @RepeatedTest(value = 100)
-    fun `count total number of crimes by type`(session: Session) {
-        val result = session.runQuery(
+    @Test
+    fun `count total number of crimes by type`(session: Session, testTimer: TestTimer) {
+        val query =
             """
             MATCH (c:Crime)
             RETURN c.type AS crime_type, count(c) AS total
             ORDER BY total DESC
         """.trimIndent()
-        ).rows.toList()
-        assert(result.isNotEmpty()) { "Result should not be empty" }
+        repeat(100) {
+            val result = testTimer.timeMeasureWithResult { session.runQuery(query).rows.toList() }
+            assert(result.isNotEmpty()) { "Result should not be empty" }
+        }
     }
 
 }

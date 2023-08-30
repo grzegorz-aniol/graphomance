@@ -2,12 +2,13 @@ package org.graphomance.usecases.pole
 
 import org.graphomance.api.DbType
 import org.graphomance.api.Session
-import org.junit.jupiter.api.RepeatedTest
+import org.graphomance.engine.TestTimer
+import org.junit.jupiter.api.Test
 
 class CrimesNewParticularAddress : PoleTestBase() {
 
-    @RepeatedTest(value = 100)
-    fun `crimes near to particular address`(session: Session) {
+    @Test
+    fun `crimes near to particular address`(session: Session, testTimer: TestTimer) {
         val query = when (session.getDbType()) {
             DbType.NEO4J ->
                 """
@@ -35,8 +36,10 @@ class CrimesNewParticularAddress : PoleTestBase() {
                 """.trimIndent()
             else -> throw RuntimeException("Unsupported database")
         }
-        val result = session.runQuery(query).rows.toList()
-        assert(result.isNotEmpty()) { "Result should not be empty" }
+        repeat(100) {
+            val result = testTimer.timeMeasureWithResult { session.runQuery(query).rows.toList() }
+            assert(result.isNotEmpty()) { "Result should not be empty" }
+        }
     }
 
 }

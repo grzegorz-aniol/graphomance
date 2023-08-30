@@ -8,10 +8,10 @@ import org.graphomance.api.DbType
 import org.graphomance.api.NodeIdentifier
 import org.graphomance.api.Session
 import org.graphomance.engine.GraphomanceTest
+import org.graphomance.engine.TestTimer
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestMethodOrder
@@ -27,7 +27,7 @@ class NodeSimpleCrud {
             "Event", "Location", "Meeting", "Crime", "Officer"
         )
         const val numOfAttributeSets = 100
-        const val numOfNodes = 100
+        const val numOfNodes = 1_000
     }
 
     private val attributeSets = ArrayList<MutableMap<String, Any>>(numOfAttributeSets)
@@ -48,32 +48,40 @@ class NodeSimpleCrud {
         }
     }
 
-    @RepeatedTest(value = numOfNodes)
+    @Test
     @Order(1)
-    fun `creating node with properties`(session: Session) {
-        val index = faker.random().nextInt(numOfAttributeSets)
-        val clasName = classNames[index % classNames.size]
-        val nodeIdentifier = session.objectApi().createNode(clasName, attributeSets[index])
-        assertThat(nodeIdentifier).isNotNull
-        nodeData += NodeData(nodeIdentifier, clasName)
+    fun `creating node with properties`(session: Session, testTimer: TestTimer) {
+        val objectApi = session.objectApi()
+        repeat(numOfNodes) {
+            val index = faker.random().nextInt(numOfAttributeSets)
+            val clasName = classNames[index % classNames.size]
+            val nodeIdentifier = testTimer.timeMeasureWithResult { objectApi.createNode(clasName, attributeSets[index]) }
+            assertThat(nodeIdentifier).isNotNull
+            nodeData += NodeData(nodeIdentifier, clasName)
+        }
     }
 
-    @RepeatedTest(value = numOfNodes)
+    @Test
     @Order(2)
-    fun `updating node`(session: Session) {
-        val index = faker.random().nextInt(numOfNodes)
-        val nodeToUpdate = nodeData[index]
-        val newDataIndex = (faker.random().nextInt(numOfAttributeSets)) % numOfAttributeSets
-        val newData = attributeSets[newDataIndex]
-        session.objectApi().updateNode(nodeToUpdate.className, nodeToUpdate.id, newData)
+    fun `updating node`(session: Session, testTimer: TestTimer) {
+        val objectApi = session.objectApi()
+        repeat(numOfNodes) {
+            val index = faker.random().nextInt(numOfNodes)
+            val nodeToUpdate = nodeData[index]
+            val newDataIndex = (faker.random().nextInt(numOfAttributeSets)) % numOfAttributeSets
+            val newData = attributeSets[newDataIndex]
+            testTimer.timeMeasure { objectApi.updateNode(nodeToUpdate.className, nodeToUpdate.id, newData) }
+        }
     }
 
     @Test
     @Order(3)
-    fun `deleting nodes`(session: Session) {
+    fun `deleting nodes`(session: Session, testTimer: TestTimer) {
         val objectApi = session.objectApi()
         nodeData.forEach { node ->
-            objectApi.deleteNode(node.className, node.id)
+            testTimer.timeMeasure {
+                objectApi.deleteNode(node.className, node.id)
+            }
         }
     }
 

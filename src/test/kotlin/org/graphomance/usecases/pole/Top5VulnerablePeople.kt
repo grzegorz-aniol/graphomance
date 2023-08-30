@@ -2,15 +2,16 @@ package org.graphomance.usecases.pole
 
 import org.graphomance.api.DbType
 import org.graphomance.api.Session
-import org.junit.jupiter.api.RepeatedTest
+import org.graphomance.engine.TestTimer
+import org.junit.jupiter.api.Test
 
 class Top5VulnerablePeople : PoleTestBase() {
 
     //Memgraph: Not yet implemented: atom expression '(p:Person)-[:PARTY_TO]->(:Crime)'
 
-    @RepeatedTest(value = 100)
-    fun `get top 5 vulnerable people`(session: Session) {
-        var query = when (session.getDbType()) {
+    @Test
+    fun `get top 5 vulnerable people`(session: Session, testTimer: TestTimer) {
+        val query = when (session.getDbType()) {
             DbType.NEO4J ->
                 """
                     MATCH (p:Person)-[:KNOWS]-(friend)-[:PARTY_TO]->(:Crime)
@@ -35,8 +36,10 @@ class Top5VulnerablePeople : PoleTestBase() {
                 """.trimIndent()
             else -> throw RuntimeException("Unsupported database type")
         }
-        val result = session.runQuery(query).rows.toList()
-        assert(result.isNotEmpty()) { "Result should not be empty" }
+        repeat(100) {
+            val result = testTimer.timeMeasureWithResult { session.runQuery(query).rows.toList() }
+            assert(result.isNotEmpty()) { "Result should not be empty" }
+        }
     }
 
 }

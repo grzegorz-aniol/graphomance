@@ -9,11 +9,11 @@ import org.graphomance.api.NodeIdentifier
 import org.graphomance.api.RelationshipIdentifier
 import org.graphomance.api.Session
 import org.graphomance.engine.GraphomanceTest
+import org.graphomance.engine.TestTimer
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestMethodOrder
@@ -33,8 +33,8 @@ class RelationshipSimpleCrud {
             "HAS_PHONE", "INVOLVED_IN", "LOCATED_IN", "PARTY_TO", "FAMILY_REL",
         )
         const val numOfAttributeSets = 100
-        const val numOfNodes = 100
-        const val numOfRelationships = 100
+        const val numOfNodes = 1_000
+        const val numOfRelationships = 1_000
     }
 
     private val attributeSets = ArrayList<MutableMap<String, Any>>(numOfAttributeSets)
@@ -62,33 +62,39 @@ class RelationshipSimpleCrud {
         }
     }
 
-    @RepeatedTest(value = numOfRelationships)
+    @Test
     @Order(1)
-    fun `creating relationship`(session: Session) {
-        val startIndex = faker.random().nextInt(numOfNodes)
-        val endIndex = (startIndex + faker.random().nextInt(numOfNodes - 1)) % numOfNodes
-        val typeName = typeNames[startIndex % typeNames.size]
-        val startNode = nodeData[startIndex]
-        val endNode = nodeData[endIndex]
-        val relationIdentifier = session.objectApi().createRelationship(typeName, startNode.id, endNode.id, emptyMap())
-        assertThat(relationIdentifier).isNotNull
-        relationshipData += RelationshipData(relationIdentifier, typeName)
+    fun `creating relationship`(session: Session, testTimer: TestTimer) {
+        val objectApi = session.objectApi()
+        repeat(numOfRelationships) {
+            val startIndex = faker.random().nextInt(numOfNodes)
+            val endIndex = (startIndex + faker.random().nextInt(numOfNodes - 1)) % numOfNodes
+            val typeName = typeNames[startIndex % typeNames.size]
+            val startNode = nodeData[startIndex]
+            val endNode = nodeData[endIndex]
+            val relationIdentifier = testTimer.timeMeasureWithResult { objectApi.createRelationship(typeName, startNode.id, endNode.id, emptyMap()) }
+            assertThat(relationIdentifier).isNotNull
+            relationshipData += RelationshipData(relationIdentifier, typeName)
+        }
     }
 
-    @RepeatedTest(value = numOfRelationships)
+    @Test
     @Order(2)
-    fun `update relationships`(session: Session) {
-        val relationshipToUpdate = relationshipData[faker.random().nextInt(numOfRelationships)]
-        val updateMap = attributeSets[faker.random().nextInt(numOfAttributeSets)]
-        session.objectApi().updateRelationship(relationshipToUpdate.typeName, relationshipToUpdate.id, updateMap)
+    fun `update relationships`(session: Session, testTimer: TestTimer) {
+        val objectApi = session.objectApi()
+        repeat(numOfRelationships) {
+            val relationshipToUpdate = relationshipData[faker.random().nextInt(numOfRelationships)]
+            val updateMap = attributeSets[faker.random().nextInt(numOfAttributeSets)]
+            testTimer.timeMeasure { objectApi.updateRelationship(relationshipToUpdate.typeName, relationshipToUpdate.id, updateMap) }
+        }
     }
 
     @Test
     @Order(3)
-    fun `deleting relationships`(session: Session) {
+    fun `deleting relationships`(session: Session, testTimer: TestTimer) {
         val objectApi = session.objectApi()
         relationshipData.forEach { relationship ->
-            objectApi.deleteRelationship(relationship.typeName, relationship.id)
+            testTimer.timeMeasure { objectApi.deleteRelationship(relationship.typeName, relationship.id) }
         }
     }
 

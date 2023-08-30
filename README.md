@@ -36,6 +36,15 @@ Following command runs all available tests:
 
 Replace DB_TYPE with one of possible db providers: NEO4J, MEMGRAPH
 
+## Test results
+
+### Neo4j
+You can find recent Neo4j result ins sub folder [Neo4j results](results/neo4j/).
+
+### Memgraph
+You can find recent Memgraph results in sub folder [Memgraph results](results/memgraph/).
+
+
 ## Graph database differences
 
 ### Differences between Cypher implementation in Neo4j and Memgraph 

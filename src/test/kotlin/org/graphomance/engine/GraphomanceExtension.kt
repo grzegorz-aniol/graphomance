@@ -28,13 +28,13 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
 
     private var dbName: String?
     private var hostUrl: String
-    private var dbType: String
+    private var dbType: DbType
     private lateinit var connection: Connection
     private lateinit var sessionProducer: SessionProducer
     private val namespace = ExtensionContext.Namespace.create(GraphomanceExtension::class.java.name)
 
     init {
-        dbType = requireNotNull(getParameters("DB_TYPE")) { "Missing DB_TYPE parameter" }
+        dbType = DbType.of(requireNotNull(getParameters("DB_TYPE")) { "Missing DB_TYPE parameter" })
         hostUrl = requireNotNull(getParameters("URL")) { "Required URL parameter" }
         dbName = getParameters("DB_NAME")
     }
@@ -51,6 +51,70 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
     }
 
     override fun beforeTestExecution(context: ExtensionContext) {
+        val testCtx = getOrCreateTestExecutionContext(context)
+        testCtx.start()
+    }
+
+    override fun afterTestExecution(context: ExtensionContext) {
+        val endTime = System.nanoTime()
+        val testCtx = getOrCreateTestExecutionContext(context)
+        if (testCtx.isStarted()) {
+            testCtx.stop(endTime)
+        }
+        if (!testCtx.isCompleted()) {
+            throw RuntimeException("Test timer has not been started")
+        }
+        // With @RepeatedTest, we can measure exactly how many times time is measured
+        // otherwise, when TestTimer object is use to capture metrics, we may expect more results
+        // TODO: better handle case with @RepeatedTest and TestTimer used together
+        val lastIteration = (testCtx.getExpectedIterations() == testCtx.getCount())
+        if (lastIteration) {
+            val totalTimeInSec = 1e-9 * testCtx.getTotalTimeNs()
+            val avgTimeInMs = (1e-6 * testCtx.getTotalTimeNs()) / testCtx.getCount()
+            println("Test: '${context.testMethod.get().name}', iterations: ${testCtx.getCount()}, total time: $totalTimeInSec [s], avg time: $avgTimeInMs [ms]")
+        }
+    }
+
+    override fun afterEach(context: ExtensionContext) {
+        // NOP
+    }
+
+    override fun supportsParameter(parameterContext: ParameterContext, context: ExtensionContext): Boolean {
+        val type = parameterContext.parameter.type
+        return type == Session::class.java || type == TestTimer::class.java
+
+    }
+
+    override fun resolveParameter(parameterContext: ParameterContext, context: ExtensionContext): Any {
+        return when (parameterContext.parameter.type) {
+            Session::class.java -> createSession()
+            TestTimer::class.java -> produceTestTimer(context)
+            else -> throw RuntimeException("Cannot instantiate test parameter of class ${parameterContext.javaClass.name}")
+        }
+    }
+
+    private fun produceTestTimer(context: ExtensionContext): TestTimer {
+        if (context.testMethod.isEmpty) {
+            throw RuntimeException("TestTimer can be used only within a test method")
+        }
+        val testCtx = getOrCreateTestExecutionContext(context)
+        return object : TestTimer {
+            override fun <T> timeMeasureWithResult(actionWithResult: () -> T): T {
+                testCtx.start()
+                try {
+                    return actionWithResult()
+                } finally {
+                    testCtx.stop()
+                }
+            }
+        }
+    }
+
+    override fun afterAll(context: ExtensionContext?) {
+        MetricsService.reportMetrics()
+    }
+
+    private fun getOrCreateTestExecutionContext(context: ExtensionContext) : TestExecutionContext {
         val store = getParentStore(context)
         val testClass = context.requiredTestClass
         val testMethod = context.requiredTestMethod
@@ -59,56 +123,21 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
             val repeatedTestAnnotation: RepeatedTest? = context.element
                 .map { it.annotations.filterIsInstance(RepeatedTest::class.java).firstOrNull() }
                 .orElse(null)
-            testCtx = TestExecutionContext(MetricsService.registerTimeGaugeMetric(testClass.simpleName, testMethod.name))
-            if (repeatedTestAnnotation != null) {
-                testCtx.expectedIterations = repeatedTestAnnotation.value
-            }
+            testCtx = TestExecutionContext(metric = MetricsService.registerTimeGaugeMetric(testClass.simpleName, testMethod.name), expectedIterations = repeatedTestAnnotation?.value ?: 1)
             store.put(testMethod, testCtx)
         }
-        testCtx.start()
-    }
-
-    override fun afterTestExecution(context: ExtensionContext) {
-        val endTime = System.nanoTime()
-        val store = getParentStore(context)
-        val testCtx = store.get(context.requiredTestMethod) as TestExecutionContext
-        testCtx.stop(endTime)
-
-        val lastIteration = (testCtx.expectedIterations == testCtx.count)
-        if (lastIteration) {
-            val totalTimeInSec = 1e-9 * testCtx.totalTimeNs
-            val avgTimeInMs = (1e-6 * testCtx.totalTimeNs) / testCtx.count
-            println("Test: '${context.testMethod.get().name}', iterations: ${testCtx.count}, total time: $totalTimeInSec [s], avg time: $avgTimeInMs [ms]")
-        }
-    }
-
-    override fun afterEach(context: ExtensionContext) {
-        // NOP
-    }
-
-    override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
-        return parameterContext.parameter.type == Session::class.java
-    }
-
-    override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
-        return when (parameterContext.parameter.type) {
-            Session::class.java -> createSession()
-            else -> throw RuntimeException("Cannot instantiate test parameter of class ${parameterContext.javaClass.name}")
-        }
-    }
-
-    override fun afterAll(context: ExtensionContext?) {
-        MetricsService.reportMetrics()
+        return testCtx
     }
 
     private fun createSession() = sessionProducer.createSession(connection)
 
     private fun setupDbConnectionProvider(customDatabaseName: String?) {
-        when (val dbType = DbType.of(dbType)) {
+        when (dbType) {
             DbType.NEO4J, DbType.MEMGRAPH -> {
                 val connProducer = NeoConnectionProducer(dbType)
-                val connSetup =
-                    NeoConnectionSettings(dbPath = hostUrl, dbName = customDatabaseName ?: dbName ?: "neo4j")
+                // using custom database name only with Neo4j Enterprise
+                val dbName = (customDatabaseName ?: dbName ?: "neo4j").takeIf { dbType == DbType.NEO4J }
+                val connSetup = NeoConnectionSettings(dbPath = hostUrl, dbName = dbName)
                 connection = connProducer.connect(connSetup)
                 sessionProducer = connProducer
             }
@@ -145,20 +174,32 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
         return System.getProperty(key)?.takeIf { it.isNotBlank() } ?: System.getenv(key)?.takeIf { it.isNotBlank() }
     }
 
-    private class TestExecutionContext(val metric: Timer) {
-        var startTimeNs: Long = 0
-        var totalTimeNs: Long = 0
-        var count = 0
-        var expectedIterations: Int = 1
+    private class TestExecutionContext(private val metric: Timer, private var expectedIterations: Int = 1) {
+        private var startTimeNs: Long = 0
+        private var totalTimeNs: Long = 0
+        private var count = 0
+        private var isStarted = false
+        private var isCompleted = false
         fun start() {
+            isStarted = true
+            isCompleted = false
             startTimeNs = System.nanoTime()
             totalTimeNs = startTimeNs
         }
-        fun stop(stopTimeNs: Long) {
+        fun stop(stopTimeNs: Long = System.nanoTime()) {
             totalTimeNs = stopTimeNs - startTimeNs
             metric.update(totalTimeNs, TimeUnit.NANOSECONDS)
             count += 1
+            isStarted = false
+            isCompleted = true
+            startTimeNs = 0L
         }
+
+        fun isStarted() = isStarted
+        fun isCompleted() = isCompleted
+        fun getTotalTimeNs() : Long = totalTimeNs
+        fun getCount() = count
+        fun getExpectedIterations() = expectedIterations
     }
 
     private fun getParentStore(ctx: ExtensionContext) = ctx.parent.get().getStore(namespace)
