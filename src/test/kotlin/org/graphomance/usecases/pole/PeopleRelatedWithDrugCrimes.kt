@@ -13,7 +13,7 @@ class PeopleRelatedWithDrugCrimes : PoleTestBase() {
             MATCH path = (:Officer {badge_no: '26-5234182'})<-[:INVESTIGATED_BY]-(:Crime {type: 'Drugs'})<-[:PARTY_TO]-(:Person)-[:KNOWS*..3]-(:Person)-[:PARTY_TO]->(:Crime {type: 'Drugs'})
             RETURN path
         """.trimIndent()
-        repeat(30) {
+        repeat(100) {
             val size = testTimer.timeMeasureWithResult { session.runQuery(query, emptyMap()).rows.toList().size }
             assertThat(size).isEqualTo(90)
         }

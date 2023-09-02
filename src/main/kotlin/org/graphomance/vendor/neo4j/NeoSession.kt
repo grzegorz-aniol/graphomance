@@ -7,7 +7,6 @@ import org.graphomance.api.Row
 import org.graphomance.api.SchemaApi
 import org.graphomance.api.Session
 import org.graphomance.api.Values
-import org.graphomance.metrics.ObjectApiMetricsWrapper
 
 internal class NeoSession(
     val connection: NeoConnection,
@@ -36,6 +35,6 @@ internal class NeoSession(
 
     init {
         schemaApi = NeoSchemaApi(this)
-        objectApi = ObjectApiMetricsWrapper.create(NeoObjectApi(this))
+        objectApi = NeoObjectApi(this)
     }
 }

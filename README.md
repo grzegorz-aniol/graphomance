@@ -42,6 +42,10 @@ Replace DB_TYPE with one of possible db providers: NEO4J, MEMGRAPH
 ### Command for running all tests for Memgraph
 > DB_TYPE=MEMGRAPH URL=bolt://localhost:7688 gradle test -i --rerun
 
+### Generating master results CSV file
+File `results/master-results.csv` contains all test results merged per each database provider. It can be used to generate chart. Master file can be regenerate after completing all results with the following command:
+> gradle combineResults
+
 ### Running all tests
 Assuming all graph database services are available you can run all tests with just one shell script:
 > ./run.sh

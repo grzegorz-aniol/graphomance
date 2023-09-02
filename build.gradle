@@ -1,7 +1,15 @@
+import net.researchgate.release.GitAdapter
+
 plugins {
     id 'net.researchgate.release' version '2.8.1'
-    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    id 'org.jetbrains.kotlin.jvm' version '1.8.22'
+
+    // 1.8.20 due to compatibility with kotlinx-dataframe and ksp
+    id 'org.jetbrains.kotlin.jvm' version '1.8.20'
+
+//    // Optional Gradle plugin for enhanced type safety and schema generation
+//    // https://kotlin.github.io/dataframe/gradle.html
+    id 'org.jetbrains.kotlinx.dataframe' version '0.11.1'
+
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
 }
@@ -22,7 +30,10 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'org.assertj:assertj-core:3.11.1'
     implementation 'org.reflections:reflections:0.10.2'
-    implementation 'com.github.javafaker:javafaker:1.0.2'
+    implementation ('com.github.javafaker:javafaker:1.0.2')  { exclude module: 'snakeyaml' }
+    implementation 'org.yaml:snakeyaml:2.2' // solves CVE errors in javafaker dependencies
+    implementation 'org.jetbrains.kotlinx:dataframe:0.11.1'
+    implementation 'org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.4.2'
 
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
@@ -31,7 +42,7 @@ dependencies {
 }
 
 release {
-    scmAdapters = [net.researchgate.release.GitAdapter]
+    scmAdapters = [GitAdapter]
     preTagCommitMessage = 'Pre tag: '
     tagCommitMessage = 'Creating tag: '
     newVersionCommitMessage = 'New version: '
@@ -47,4 +58,12 @@ java {
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+task combineResults(type: JavaExec) {
+    dependsOn compileKotlin
+    group = "Execution"
+    description = "Combining test results"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "org.graphomance.reporting.ChartsGeneratorKt"
 }

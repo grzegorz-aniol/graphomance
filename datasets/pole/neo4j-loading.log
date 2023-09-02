@@ -1,0 +1,378 @@
++-----------------+
+| comment         |
++-----------------+
+| "Loading nodes" |
++-----------------+
+
+1 row
+ready to start consuming query after 10 ms, results consumed after another 1 ms
++-------------------+
+| 'Area' | count(*) |
++-------------------+
+| "Area" | 93       |
++-------------------+
+
+1 row
+ready to start consuming query after 14 ms, results consumed after another 16 ms
+Added 93 nodes, Set 186 properties, Added 93 labels
++--------------------+
+| 'Crime' | count(*) |
++--------------------+
+| "Crime" | 28762    |
++--------------------+
+
+1 row
+ready to start consuming query after 23 ms, results consumed after another 318 ms
+Added 28762 nodes, Set 143683 properties, Added 28762 labels
++--------------------+
+| 'Email' | count(*) |
++--------------------+
+| "Email" | 328      |
++--------------------+
+
+1 row
+ready to start consuming query after 17 ms, results consumed after another 15 ms
+Added 328 nodes, Set 656 properties, Added 328 labels
++-----------------------+
+| 'Location' | count(*) |
++-----------------------+
+| "Location" | 14904    |
++-----------------------+
+
+1 row
+ready to start consuming query after 16 ms, results consumed after another 81 ms
+Added 14904 nodes, Set 74520 properties, Added 14904 labels
++---------------------+
+| 'Object' | count(*) |
++---------------------+
+| "Object" | 7        |
++---------------------+
+
+1 row
+ready to start consuming query after 15 ms, results consumed after another 3 ms
+Added 7 nodes, Set 28 properties, Added 7 labels
++----------------------+
+| 'Officer' | count(*) |
++----------------------+
+| "Officer" | 1000     |
++----------------------+
+
+1 row
+ready to start consuming query after 16 ms, results consumed after another 14 ms
+Added 1000 nodes, Set 5000 properties, Added 1000 labels
++---------------------+
+| 'Person' | count(*) |
++---------------------+
+| "Person" | 369      |
++---------------------+
+
+1 row
+ready to start consuming query after 15 ms, results consumed after another 5 ms
+Added 369 nodes, Set 1632 properties, Added 369 labels
++--------------------+
+| 'Phone' | count(*) |
++--------------------+
+| "Phone" | 328      |
++--------------------+
+
+1 row
+ready to start consuming query after 16 ms, results consumed after another 5 ms
+Added 328 nodes, Set 656 properties, Added 328 labels
++------------------------+
+| 'PhoneCall' | count(*) |
++------------------------+
+| "PhoneCall" | 534      |
++------------------------+
+
+1 row
+ready to start consuming query after 20 ms, results consumed after another 10 ms
+Added 534 nodes, Set 2670 properties, Added 534 labels
++-----------------------+
+| 'PostCode' | count(*) |
++-----------------------+
+| "PostCode" | 14196    |
++-----------------------+
+
+1 row
+ready to start consuming query after 12 ms, results consumed after another 52 ms
+Added 14196 nodes, Set 28392 properties, Added 14196 labels
++----------------------+
+| 'Vehicle' | count(*) |
++----------------------+
+| "Vehicle" | 1000     |
++----------------------+
+
+1 row
+ready to start consuming query after 21 ms, results consumed after another 29 ms
+Added 1000 nodes, Set 5000 properties, Added 1000 labels
++---------------------------------+
+| comment                         |
++---------------------------------+
+| "Creating node key constraints" |
++---------------------------------+
+
+1 row
+ready to start consuming query after 2 ms, results consumed after another 0 ms
+0 rows
+ready to start consuming query after 80 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 254 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 17 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 72 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 17 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 17 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 17 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 16 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 16 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 42 ms, results consumed after another 0 ms
+Added 1 constraints
+0 rows
+ready to start consuming query after 20 ms, results consumed after another 0 ms
+Added 1 constraints
++-------------------------+
+| comment                 |
++-------------------------+
+| "Creating relationship" |
++-------------------------+
+
+1 row
+ready to start consuming query after 10 ms, results consumed after another 1 ms
++---------------------+
+| 'CALLED' | count(*) |
++---------------------+
+| "CALLED" | 534      |
++---------------------+
+
+1 row
+ready to start consuming query after 52 ms, results consumed after another 59 ms
+Created 534 relationships
++---------------------+
+| 'CALLER' | count(*) |
++---------------------+
+| "CALLER" | 534      |
++---------------------+
+
+1 row
+ready to start consuming query after 97 ms, results consumed after another 64 ms
+Created 534 relationships
++------------------------------+
+| 'CURRENT_ADDRESS' | count(*) |
++------------------------------+
+| "CURRENT_ADDRESS" | 368      |
++------------------------------+
+
+1 row
+ready to start consuming query after 44 ms, results consumed after another 19 ms
+Created 368 relationships
++-----------------------+
+| 'PARTY_TO' | count(*) |
++-----------------------+
+| "PARTY_TO" | 55       |
++-----------------------+
+
+1 row
+ready to start consuming query after 47 ms, results consumed after another 5 ms
+Created 55 relationships
++-------------------------+
+| 'FAMILY_REL' | count(*) |
++-------------------------+
+| "FAMILY_REL" | 155      |
++-------------------------+
+
+1 row
+ready to start consuming query after 68 ms, results consumed after another 25 ms
+Created 155 relationships, Set 155 properties
++--------------------+
+| 'KNOWS' | count(*) |
++--------------------+
+| "KNOWS" | 586      |
++--------------------+
+
+1 row
+ready to start consuming query after 74 ms, results consumed after another 80 ms
+Created 586 relationships
++-----------------------+
+| 'KNOWS_LW' | count(*) |
++-----------------------+
+| "KNOWS_LW" | 80       |
++-----------------------+
+
+1 row
+ready to start consuming query after 78 ms, results consumed after another 9 ms
+Created 80 relationships
++--------------------------+
+| 'KNOWS_PHONE' | count(*) |
++--------------------------+
+| "KNOWS_PHONE" | 118      |
++--------------------------+
+
+1 row
+ready to start consuming query after 95 ms, results consumed after another 14 ms
+Created 118 relationships
++-----------------------+
+| 'KNOWS_SN' | count(*) |
++-----------------------+
+| "KNOWS_SN" | 241      |
++-----------------------+
+
+1 row
+ready to start consuming query after 96 ms, results consumed after another 16 ms
+Created 241 relationships
++------------------------+
+| 'HAS_EMAIL' | count(*) |
++------------------------+
+| "HAS_EMAIL" | 328      |
++------------------------+
+
+1 row
+ready to start consuming query after 72 ms, results consumed after another 31 ms
+Created 328 relationships
++------------------------+
+| 'HAS_PHONE' | count(*) |
++------------------------+
+| "HAS_PHONE" | 328      |
++------------------------+
+
+1 row
+ready to start consuming query after 85 ms, results consumed after another 35 ms
+Created 328 relationships
++---------------------------+
+| 'HAS_POSTCODE' | count(*) |
++---------------------------+
+| "HAS_POSTCODE" | 14904    |
++---------------------------+
+
+1 row
+ready to start consuming query after 94 ms, results consumed after another 859 ms
+Created 14904 relationships
++-------------------------------+
+| 'LOCATION_IN_AREA' | count(*) |
++-------------------------------+
+| "LOCATION_IN_AREA" | 14904    |
++-------------------------------+
+
+1 row
+ready to start consuming query after 71 ms, results consumed after another 427 ms
+Created 14904 relationships
++-------------------------------+
+| 'POSTCODE_IN_AREA' | count(*) |
++-------------------------------+
+| "POSTCODE_IN_AREA" | 14196    |
++-------------------------------+
+
+1 row
+ready to start consuming query after 58 ms, results consumed after another 459 ms
+Created 14196 relationships
++------------------------------+
+| 'INVESTIGATED_BY' | count(*) |
++------------------------------+
+| "INVESTIGATED_BY" | 28762    |
++------------------------------+
+
+1 row
+ready to start consuming query after 78 ms, results consumed after another 723 ms
+Created 28762 relationships
++--------------------------+
+| 'OCCURRED_AT' | count(*) |
++--------------------------+
+| "OCCURRED_AT" | 28762    |
++--------------------------+
+
+1 row
+ready to start consuming query after 47 ms, results consumed after another 659 ms
+Created 28762 relationships
++--------------------------+
+| 'INVOLVED_IN' | count(*) |
++--------------------------+
+| "INVOLVED_IN" | 7        |
++--------------------------+
+
+1 row
+ready to start consuming query after 46 ms, results consumed after another 23 ms
+Created 7 relationships
++-------------------------------+
+| comment                       |
++-------------------------------+
+| "Creating additional indexes" |
++-------------------------------+
+
+1 row
+ready to start consuming query after 4 ms, results consumed after another 1 ms
+0 rows
+ready to start consuming query after 9 ms, results consumed after another 0 ms
+Added 1 indexes
++------------------------+
+| label       | count(*) |
++------------------------+
+| "Area"      | 93       |
+| "Crime"     | 28762    |
+| "Email"     | 328      |
+| "Location"  | 14904    |
+| "Object"    | 7        |
+| "Officer"   | 1000     |
+| "Person"    | 369      |
+| "Phone"     | 328      |
+| "PhoneCall" | 534      |
+| "PostCode"  | 14196    |
+| "Vehicle"   | 1000     |
++------------------------+
+
+11 rows
+ready to start consuming query after 43 ms, results consumed after another 165 ms
++-------------------------------+
+| type               | count(*) |
++-------------------------------+
+| "CALLED"           | 534      |
+| "CALLER"           | 534      |
+| "CURRENT_ADDRESS"  | 368      |
+| "FAMILY_REL"       | 155      |
+| "HAS_EMAIL"        | 328      |
+| "HAS_PHONE"        | 328      |
+| "HAS_POSTCODE"     | 14904    |
+| "INVESTIGATED_BY"  | 28762    |
+| "INVOLVED_IN"      | 7        |
+| "KNOWS"            | 586      |
+| "KNOWS_LW"         | 80       |
+| "KNOWS_PHONE"      | 118      |
+| "KNOWS_SN"         | 241      |
+| "LOCATION_IN_AREA" | 14904    |
+| "OCCURRED_AT"      | 28762    |
+| "PARTY_TO"         | 55       |
+| "POSTCODE_IN_AREA" | 14196    |
++-------------------------------+
+
+17 rows
+ready to start consuming query after 45 ms, results consumed after another 77 ms
++------------------------+
+| 'All nodes' | count(*) |
++------------------------+
+| "All nodes" | 61521    |
++------------------------+
+
+1 row
+ready to start consuming query after 24 ms, results consumed after another 22 ms
++--------------------------------+
+| 'All relationships' | count(*) |
++--------------------------------+
+| "All relationships" | 104862   |
++--------------------------------+
+
+1 row
+ready to start consuming query after 28 ms, results consumed after another 41 ms

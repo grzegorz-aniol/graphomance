@@ -123,7 +123,7 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
             val repeatedTestAnnotation: RepeatedTest? = context.element
                 .map { it.annotations.filterIsInstance(RepeatedTest::class.java).firstOrNull() }
                 .orElse(null)
-            testCtx = TestExecutionContext(metric = MetricsService.registerTimeGaugeMetric(testClass.simpleName, testMethod.name), expectedIterations = repeatedTestAnnotation?.value ?: 1)
+            testCtx = TestExecutionContext(metric = MetricsService.registerTimeGaugeMetric(testClass, testMethod.name), expectedIterations = repeatedTestAnnotation?.value ?: 1)
             store.put(testMethod, testCtx)
         }
         return testCtx
