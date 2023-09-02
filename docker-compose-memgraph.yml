@@ -2,9 +2,9 @@ services:
   memgraph:
     image: memgraph/memgraph-platform:2.10.0-memgraph2.10.0-lab2.8.0-mage1.9
     ports:
-      - 7687:7687
-      - 3000:3000
+      - 7688:7687
       - 7444:7444
+      - 3000:3000
     environment:
       - MEMGRAPH=--bolt-server-name-for-init=Neo4j/ --telemetry-enabled=false --storage-properties-on-edges=true
 #    healthcheck:
