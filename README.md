@@ -18,7 +18,7 @@ Datasets used in performance tests:
 
 This is crime investigation dataset, containing street-level crime in Greater Manchester. Dataset is originally published by data.gov.uk and transformed into independent dataset by Neo4j (see: https://github.com/neo4j-graph-examples/pole) 
 
-POLE stands for Person, Object, Location and Event. Dataset contains 62177 nodes and 105840 relationships.
+POLE stands for Person, Object, Location and Event. Dataset contains 61521 nodes and 104862 relationships.
 
 ### Loading POLE dataset to Memgraph
 
@@ -53,3 +53,6 @@ You can find recent Memgraph results in sub folder [Memgraph results](results/me
 * POINT type is not supported in Memgraph, in which geolocation should be stored in the node with properties `lng` and `lat`
 * LOAD CSV syntax is very similar, however different:
 ** file name following `WITH HEADER` (memgraph) vs opposite place, `WITH HEADERS` following file name  (Neo4j)
+* Different syntax for creating indexes:
+** Neo4j syntax: `create index for (n:Location) ON (n.address);`
+** Memgraph syntax: `create index on :Location(address);`
