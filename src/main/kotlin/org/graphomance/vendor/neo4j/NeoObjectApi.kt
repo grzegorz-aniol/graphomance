@@ -95,7 +95,7 @@ class NeoObjectApi internal constructor(private val session: NeoSession) : Objec
         properties: Map<String, Any>
     ) {
         val query = """
-            match ()-[r]-()
+            match ()-[r:`$typeName`]-()
             where ID(r)=${'$'}ident
             set r += ${'$'}map
         """.trimIndent()
@@ -104,7 +104,7 @@ class NeoObjectApi internal constructor(private val session: NeoSession) : Objec
 
     override fun deleteRelationship(typeName: String, relationshipIdentifier: RelationshipIdentifier) {
         val query = """
-            match ()-[r]-()
+            match ()-[r:`$typeName`]-()
             where ID(r)=${'$'}ident
             delete r
         """.trimIndent()
