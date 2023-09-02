@@ -32,9 +32,20 @@ POLE stands for Person, Object, Location and Event. Dataset contains 61521 nodes
 ## Running test
 
 Following command runs all available tests:
-> DB_TYPE=<DB_TYPE> URL=bolt://localhost:7687 gradle test -i --rerun
+> DB_TYPE=<DB_TYPE> URL=bolt://localhost:<BOLT_PORT> gradle test -i --rerun
 
 Replace DB_TYPE with one of possible db providers: NEO4J, MEMGRAPH
+
+### Command for running all tests for Neo4j
+> DB_TYPE=NEO4J URL=bolt://localhost:7687 gradle test -i --rerun
+
+### Command for running all tests for Memgraph
+> DB_TYPE=MEMGRAPH URL=bolt://localhost:7688 gradle test -i --rerun
+
+### Running all tests
+Assuming all graph database services are available you can run all tests with just one shell script:
+> ./run.sh
+
 
 ## Test results
 
