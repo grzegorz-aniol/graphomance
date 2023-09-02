@@ -1,4 +1,4 @@
-Test Name,Neo4J p(95) [ms],Memgraph p(95) [ms]
+Test Name,Neo4j p(95) [ms],Memgraph p(95) [ms]
 crud.NodeSimpleCrud.creating node with properties,2.65072,1.682356
 crud.NodeSimpleCrud.deleting nodes,1.19632,0.609891
 crud.NodeSimpleCrud.updating node,1.901622,0.818037
@@ -14,3 +14,4 @@ pole.PersonKnowSubgraphAlgorithms.betweenness centrality,21.811506,10.116932
 pole.ShortestPathPersonRelatedToCrime.shortest path between persons related to crimes,2.070575,3.051926
 pole.Top5VulnerablePeople.get top 5 vulnerable people,2.711948,1.861686
 pole.TopLocationsForCrimes.get top locations for crimes,39.658379,56.094166
+,,

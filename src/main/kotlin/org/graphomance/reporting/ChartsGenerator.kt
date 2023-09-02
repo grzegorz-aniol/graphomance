@@ -47,7 +47,7 @@ class ChartsGenerator {
         }
 
         val finalDf = result.values.sortedBy { it.testName }.asIterable().toDataFrame()
-            .rename { all() }.into("Test Name", "Neo4J p(95) [ms]", "Memgraph p(95) [ms]")
+            .rename { all() }.into("Test Name", "Neo4j p(95) [ms]", "Memgraph p(95) [ms]")
         val outFileName = "./results/master-results.csv"
         println("Writing to file $outFileName")
         finalDf.writeCSV(outFileName)
