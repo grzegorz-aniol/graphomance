@@ -14,7 +14,7 @@ plugins {
     id 'java-library'
 }
 
-group 'org.ganagel'
+group 'org.graphomance'
 version '1.0-SNAPSHOT'
 
 repositories {
