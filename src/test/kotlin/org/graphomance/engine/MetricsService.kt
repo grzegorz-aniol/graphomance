@@ -16,10 +16,11 @@ object MetricsService {
         SharedMetricRegistries.setDefault("default", registry)
     }
 
-    fun registerTimeGaugeMetric(testName: String, metricsName: String): Timer {
+    fun registerTimeGaugeMetric(testName: Class<*>, metricsName: String): Timer {
         val t = Timer()
+        val classNameWithPackage = testName.name.removePrefix("org.graphomance.usecases.")
         SharedMetricRegistries.getDefault()
-            .register(String.format("%s.%s", testName, metricsName), t)
+            .register(String.format("%s.%s", classNameWithPackage, metricsName), t)
         return t
     }
 
