@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 class ConnectionsBetweenVulnerablePersons : PoleTestBase() {
 
-    //Memgraph: Not yet implemented: atom expression '(p:Person)-[:PARTY_TO]->(:Crime)'
+    //Memgraph: Not yet implemented: atom expression 'WHERE NOT (p:Person)-[:PARTY_TO]->(:Crime)'
     @Test
     fun `shortest connections between vulnerable persons`(session: Session, testTimer: TestTimer) {
         val query = when (session.getDbType()) {

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 class Top5VulnerablePeople : PoleTestBase() {
 
-    //Memgraph: Not yet implemented: atom expression '(p:Person)-[:PARTY_TO]->(:Crime)'
+    //Memgraph: Not yet implemented: atom expression 'WHERE NOT (p:Person)-[:PARTY_TO]->(:Crime)'
 
     @Test
     fun `get top 5 vulnerable people`(session: Session, testTimer: TestTimer) {
