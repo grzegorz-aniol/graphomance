@@ -30,8 +30,8 @@ class ArangoSchemaApi(
 		db.createCollection(className)
 	}
 
-	override fun createRelationClass(className: String) {
-		db.createCollection(className, CollectionCreateOptions().type(CollectionType.EDGES))
+	override fun createRelationType(typeName: String) {
+		db.createCollection(typeName, CollectionCreateOptions().type(CollectionType.EDGES))
 	}
 
 	override fun dropClass(className: String) {

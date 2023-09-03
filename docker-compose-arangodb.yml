@@ -1,7 +1,13 @@
 services:
   arangodb:
-    image: arangodb:3.11.2
+    image: arangodb:${ARANGODB_VERSION}
     ports:
       - 8529:8529
     environment:
       - ARANGO_ROOT_PASSWORD=password
+    healthcheck:
+      test: nc -zw 1 localhost 8529
+      interval: 5s
+      timeout: 30s
+      retries: 5
+    command: --server.support-info-api=disabled --server.telemetrics-api=false

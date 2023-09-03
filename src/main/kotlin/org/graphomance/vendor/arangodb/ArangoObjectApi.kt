@@ -4,7 +4,7 @@ import com.arangodb.ArangoCollection
 import com.arangodb.ArangoDatabase
 import com.arangodb.entity.BaseDocument
 import com.arangodb.entity.BaseEdgeDocument
-import com.arangodb.util.MapBuilder
+import com.arangodb.model.DocumentDeleteOptions
 import java.util.Optional
 import org.graphomance.api.NodeIdentifier
 import org.graphomance.api.ObjectApi
@@ -22,65 +22,44 @@ class ArangoObjectApi(
     override fun startTransaction() {}
     override fun commit() {}
     override fun rollback() {}
-    override fun getNode(clsName: String, nodeId: NodeIdentifier): Any? {
-        return db.collection(clsName)
+    override fun getNode(className: String, nodeId: NodeIdentifier): Any? {
+        return db.collection(className)
             .getDocument(ArangoIdentifier.getKey(nodeId), BaseDocument::class.java)
     }
 
     override fun shortestPath(
         start: NodeIdentifier,
         end: NodeIdentifier
-    ): Long {
-        val edgeClsName = "RoadTo"
-        val TEMPL = String.format(
-            """RETURN LENGTH(
-  FOR v IN ANY
-    SHORTEST_PATH @a TO @b %s
-    RETURN v
-)""", edgeClsName
-        )
-        val bindVars = MapBuilder()
-            .put("a", ArangoIdentifier.getId(start))
-            .put("b", ArangoIdentifier.getId(end))
-            .get()
-        val cursor = db.query(TEMPL, bindVars, null, Long::class.java)
-        return if (cursor.hasNext()) {
-            cursor.next()
-        } else -1
-    }
+    ): Long = 0
 
     override fun createNode(
-        clsName: String,
+        className: String,
         properties: Map<String, Any>
     ): NodeIdentifier {
         val doc = BaseDocument()
-        if (properties != null) {
-            doc.properties = properties
-        }
-        val response = db.collection(clsName)
+        doc.properties = properties
+        val response = db.collection(className)
             .insertDocument(doc)
         return ArangoIdentifier(id = response.id, key = response.key)
     }
 
     override fun updateNode(
-        clsName: String,
+        className: String,
         nodeId: NodeIdentifier,
         properties: Map<String, Any>
     ) {
         val doc = BaseDocument()
-        if (properties != null) {
-            doc.properties = properties
-        }
-        db.collection(clsName)
+        doc.properties = properties
+        db.collection(className)
             .updateDocument(ArangoIdentifier.getKey(nodeId), doc)
     }
 
     override fun deleteNode(className: String, nodeId: NodeIdentifier) {
-        TODO("Not yet implemented")
+        db.collection(className).deleteDocument(ArangoIdentifier.getKey(nodeId))
     }
 
     override fun createRelationship(
-        className: String,
+        typeName: String,
         fromNode: NodeIdentifier,
         toNode: NodeIdentifier,
         properties: Map<String, Any>
@@ -88,10 +67,8 @@ class ArangoObjectApi(
         val doc = BaseEdgeDocument()
         doc.from = ArangoIdentifier.getId(fromNode)
         doc.to = ArangoIdentifier.getId(toNode)
-        if (properties != null) {
-            doc.properties = properties
-        }
-        val docInserted = db.collection(className)
+        doc.properties = properties
+        val docInserted = db.collection(typeName)
             .insertDocument(doc)
         return ArangoIdentifier(
             key = docInserted.key,
@@ -100,32 +77,30 @@ class ArangoObjectApi(
     }
 
     override fun updateRelationship(
-        clsName: String,
-        edgeId: RelationshipIdentifier,
+        typeName: String,
+        relationshipIdentifier: RelationshipIdentifier,
         properties: Map<String, Any>
     ) {
         val doc = BaseDocument()
-        if (properties != null) {
-            doc.properties = properties
-        }
-        db.collection(clsName)
-            .updateDocument(ArangoIdentifier.getKey(edgeId), doc)
+        doc.properties = properties
+        db.collection(typeName)
+            .updateDocument(ArangoIdentifier.getKey(relationshipIdentifier), doc)
     }
 
     override fun deleteRelationship(typeName: String, relationshipIdentifier: RelationshipIdentifier) {
-        TODO("Not yet implemented")
+        db.collection(typeName).deleteDocument(ArangoIdentifier.getKey(relationshipIdentifier))
     }
 
-    override fun deleteAllNodes(clsName: String) {
-        if (classExists(clsName)) {
-            Optional.ofNullable(db.collection(clsName))
+    override fun deleteAllNodes(className: String) {
+        if (classExists(className)) {
+            Optional.ofNullable(db.collection(className))
                 .ifPresent { c: ArangoCollection -> c.drop() }
         }
     }
 
-    override fun deleteAllRelationships(clsName: String) {
-        if (classExists(clsName)) {
-            Optional.ofNullable(db.collection(clsName))
+    override fun deleteAllRelationships(typeName: String) {
+        if (classExists(typeName)) {
+            Optional.ofNullable(db.collection(typeName))
                 .ifPresent { c: ArangoCollection -> c.drop() }
         }
     }

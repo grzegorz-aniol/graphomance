@@ -11,6 +11,10 @@ Graphomance supports following graph databases:
 * Memgraph 2.10.x 
 * ArangoDB 3.11.x
 
+## Creating default database for ArangoDB
+
+> docker exec graphomance-arangodb-1 arangosh --log.level debug --server.password password --server.endpoint tcp://localhost:8529 --javascript.execute-string "db._createDatabase('test');"
+
 ## Datasets
 
 Datasets used in performance tests:
@@ -50,6 +54,9 @@ For example, to run all tests for Neo4j use this command:
 
 Similarly, this command run all tests for Memgraph (please note a non-standard bolt port)
 > DB_TYPE=MEMGRAPH URL=bolt://localhost:7688 gradle test -i --rerun
+
+Finally, the command to run all ArangoDB tests:
+> DB_NAME=test DB_TYPE=ARANGODB URL=localhost:8529 gradle test -i --rerun
 
 The last step of the process combines all individual test results into master CSV file. File `results/master-results.csv` contains all test results merged per each database provider. It can be used to generate chart. Master file can be regenerated after completing all results with the following command:
 > gradle combineResults

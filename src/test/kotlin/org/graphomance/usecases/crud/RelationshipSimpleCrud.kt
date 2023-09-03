@@ -1,8 +1,11 @@
 package org.graphomance.usecases.crud
 
 import com.github.javafaker.Faker
+import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import java.util.Date
 import org.assertj.core.api.Assertions.assertThat
 import org.graphomance.api.DbType
 import org.graphomance.api.NodeIdentifier
@@ -18,7 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestMethodOrder
 
-@GraphomanceTest(dbTargets = [DbType.NEO4J, DbType.MEMGRAPH])
+@GraphomanceTest(dbTargets = [DbType.NEO4J, DbType.MEMGRAPH, DbType.ARANGODB])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class RelationshipSimpleCrud {
@@ -44,13 +47,16 @@ class RelationshipSimpleCrud {
 
     @BeforeAll
     fun generateNodesData(session: Session) {
+        session.cleanDataInDatabase()
         val objectApi = session.objectApi()
+        val schemaApi = session.schemaApi()
+        schemaApi.createClasses(classNames)
+        schemaApi.createRelationshipTypes(typeNames)
         repeat(numOfAttributeSets) { index ->
             val map = mutableMapOf<String, Any>()
             map["name"] = faker.name().fullName()
             map["address"] = faker.address().fullAddress()
-            map["birthday"] =
-                LocalDateTime.from(faker.date().birthday(18, 90).toInstant().atZone(ZoneOffset.UTC)).toLocalDate()
+            map["birthday"] = session.convertDate(faker.date().birthday())
             map["longitude"] = faker.random().nextInt(-180, 180)
             map["latitude"] = faker.random().nextInt(-90, 90)
             attributeSets += map
@@ -101,13 +107,16 @@ class RelationshipSimpleCrud {
     @AfterAll
     fun cleanUpData(session: Session) {
         val objectApi = session.objectApi()
+        val schemaApi = session.schemaApi()
         nodeData.forEach { node ->
             objectApi.deleteNode(node.className, node.id)
         }
+        typeNames.forEach { schemaApi.dropClass(it) }
+        classNames.forEach { schemaApi.dropClass(it) }
     }
 
     private data class NodeData(val id: NodeIdentifier, val className: String)
 
     private data class RelationshipData(val id: RelationshipIdentifier, val typeName: String)
-
 }
+

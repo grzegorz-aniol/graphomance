@@ -33,6 +33,10 @@ internal class NeoSession(
 
     override fun getDbType() = dbType
 
+    override fun cleanDataInDatabase() {
+        neo4jSession.run("MATCH (n) DETACH DELETE n")
+    }
+
     init {
         schemaApi = NeoSchemaApi(this)
         objectApi = NeoObjectApi(this)

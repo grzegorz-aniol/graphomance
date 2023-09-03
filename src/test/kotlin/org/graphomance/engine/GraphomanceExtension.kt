@@ -1,7 +1,6 @@
 package org.graphomance.engine
 
 import com.codahale.metrics.Timer
-import java.util.Objects
 import java.util.concurrent.TimeUnit
 import org.graphomance.api.Connection
 import org.graphomance.api.DbType
@@ -19,12 +18,14 @@ import org.junit.jupiter.api.extension.AfterTestExecutionCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback
+import org.junit.jupiter.api.extension.ConditionEvaluationResult
+import org.junit.jupiter.api.extension.ExecutionCondition
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
 
 class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestExecutionCallback,
-    AfterEachCallback, AfterTestExecutionCallback, AfterAllCallback, ParameterResolver {
+    AfterEachCallback, AfterTestExecutionCallback, AfterAllCallback, ParameterResolver, ExecutionCondition {
 
     private var dbName: String?
     private var hostUrl: String
@@ -114,6 +115,18 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
         MetricsService.reportMetrics()
     }
 
+    override fun evaluateExecutionCondition(context: ExtensionContext): ConditionEvaluationResult {
+        val cls = context.requiredTestClass
+        val annotation = findAnnotation(cls, GraphomanceTest::class.java)
+        val testForDbProvider = annotation?.dbTargets?.toSet() ?: emptySet()
+        return if (testForDbProvider.contains(dbType)) {
+            ConditionEvaluationResult.enabled("Supported database type")
+        } else {
+            ConditionEvaluationResult.disabled("Unsupported database type")
+        }
+    }
+
+
     private fun getOrCreateTestExecutionContext(context: ExtensionContext) : TestExecutionContext {
         val store = getParentStore(context)
         val testClass = context.requiredTestClass
@@ -143,12 +156,14 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
             }
 
             DbType.ARANGODB -> {
-                Objects.requireNonNull(dbName, "Database name for ArangoDB is required!")
+                requireNotNull(dbName) { "Database name for ArangoDB is required!" }
                 val connProducer: org.graphomance.api.ConnectionProducer = ArangoConnectionProducer()
                 val connSettings = ArangoConnectionSettings(
-                    dbName = "dbName",
+                    host = hostUrl.split(':')[0],
+                    port = hostUrl.split(':')[1].toInt(),
+                    dbName = dbName!!,
                     user = "root",
-                    password = "admin"
+                    password = "password"
                 )
                 connection = connProducer.connect(connSettings)
                 sessionProducer = ArangoSessionProducer()

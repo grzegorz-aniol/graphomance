@@ -1,0 +1,72 @@
+NodeSimpleCrud STANDARD_OUT
+    9/3/23, 5:38:32 PM =============================================================
+
+    -- Timers ----------------------------------------------------------------------
+    crud.NodeSimpleCrud.creating node with properties
+                 count = 1000
+             mean rate = 543.01 calls/second
+                   min = 0.30 milliseconds
+                   max = 44.06 milliseconds
+                  mean = 0.88 milliseconds
+                stddev = 2.75 milliseconds
+                median = 0.57 milliseconds
+                  95% <= 1.53 milliseconds
+                  99% <= 3.01 milliseconds
+    crud.NodeSimpleCrud.deleting nodes
+                 count = 1000
+             mean rate = 3781.40 calls/second
+                   min = 0.15 milliseconds
+                   max = 1.92 milliseconds
+                  mean = 0.25 milliseconds
+                stddev = 0.10 milliseconds
+                median = 0.23 milliseconds
+                  95% <= 0.37 milliseconds
+                  99% <= 0.50 milliseconds
+    crud.NodeSimpleCrud.updating node
+                 count = 1000
+             mean rate = 1074.55 calls/second
+                   min = 0.24 milliseconds
+                   max = 47.60 milliseconds
+                  mean = 0.65 milliseconds
+                stddev = 2.82 milliseconds
+                median = 0.40 milliseconds
+                  95% <= 1.10 milliseconds
+                  99% <= 1.89 milliseconds
+
+
+
+RelationshipSimpleCrud STANDARD_OUT
+    9/3/23, 5:38:34 PM =============================================================
+
+    -- Timers ----------------------------------------------------------------------
+    crud.RelationshipSimpleCrud.creating relationship
+                 count = 1000
+             mean rate = 910.20 calls/second
+                   min = 0.13 milliseconds
+                   max = 44.91 milliseconds
+                  mean = 0.28 milliseconds
+                stddev = 1.42 milliseconds
+                median = 0.21 milliseconds
+                  95% <= 0.30 milliseconds
+                  99% <= 1.05 milliseconds
+    crud.RelationshipSimpleCrud.deleting relationships
+                 count = 1000
+             mean rate = 2546.55 calls/second
+                   min = 0.11 milliseconds
+                   max = 1.39 milliseconds
+                  mean = 0.18 milliseconds
+                stddev = 0.06 milliseconds
+                median = 0.17 milliseconds
+                  95% <= 0.25 milliseconds
+                  99% <= 0.31 milliseconds
+    crud.RelationshipSimpleCrud.update relationships
+                 count = 1000
+             mean rate = 1221.25 calls/second
+                   min = 0.17 milliseconds
+                   max = 41.36 milliseconds
+                  mean = 0.42 milliseconds
+                stddev = 2.57 milliseconds
+                median = 0.24 milliseconds
+                  95% <= 0.36 milliseconds
+                  99% <= 0.55 milliseconds
+

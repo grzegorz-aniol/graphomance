@@ -9,6 +9,7 @@ import org.graphomance.api.NodeIdentifier
 import org.graphomance.api.Session
 import org.graphomance.engine.GraphomanceTest
 import org.graphomance.engine.TestTimer
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
@@ -16,7 +17,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestMethodOrder
 
-@GraphomanceTest(dbTargets = [DbType.NEO4J, DbType.MEMGRAPH])
+@GraphomanceTest(dbTargets = [DbType.NEO4J, DbType.MEMGRAPH, DbType.ARANGODB])
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class NodeSimpleCrud {
@@ -35,13 +36,14 @@ class NodeSimpleCrud {
     private val faker = Faker()
 
     @BeforeAll
-    fun generateNodesData() {
+    fun generateNodesData(session: Session) {
+        session.cleanDataInDatabase()
+        session.schemaApi().createClasses(classNames)
         repeat(numOfAttributeSets) {
             val map = mutableMapOf<String, Any>()
             map["name"] = faker.name().fullName()
             map["address"] = faker.address().fullAddress()
-            map["birthday"] =
-                LocalDateTime.from(faker.date().birthday(18, 90).toInstant().atZone(ZoneOffset.UTC)).toLocalDate()
+            map["birthday"] = session.convertDate(faker.date().birthday())
             map["longitude"] = faker.random().nextInt(-180, 180)
             map["latitude"] = faker.random().nextInt(-90, 90)
             attributeSets += map

@@ -3,7 +3,6 @@ package org.graphomance.vendor.arangodb
 import com.arangodb.ArangoDatabase
 import org.graphomance.api.DbType
 import org.graphomance.api.Result
-import org.graphomance.api.SchemaApi
 import org.graphomance.api.Session
 
 class ArangoSession(
@@ -12,9 +11,8 @@ class ArangoSession(
 ) : Session {
 
 	override fun close() {}
-	override fun schemaApi(): SchemaApi {
-		return ArangoSchemaApi(db = db)
-	}
+
+	override fun schemaApi() = ArangoSchemaApi(db = db)
 
 	override fun objectApi() = ArangoObjectApi(db = db)
 
@@ -23,5 +21,12 @@ class ArangoSession(
 	}
 
 	override fun getDbType() = DbType.ARANGODB
+
+	override fun cleanDataInDatabase() {
+		val schemaApi = schemaApi()
+		db.collections.filter { !it.isSystem }
+			.map { it.name }
+			.forEach { schemaApi.dropClass(it) }
+	}
 
 }

@@ -1,17 +1,16 @@
-Test Name,Neo4j p(95) [ms],Memgraph p(95) [ms]
-crud.NodeSimpleCrud.creating node with properties,2.65072,1.682356
-crud.NodeSimpleCrud.deleting nodes,1.19632,0.609891
-crud.NodeSimpleCrud.updating node,1.901622,0.818037
-crud.RelationshipSimpleCrud.creating relationship,1.341817,0.57157
-crud.RelationshipSimpleCrud.deleting relationships,1.208022,16.724117
-crud.RelationshipSimpleCrud.update relationships,1.201869,15.468208
-pole.ConnectionsBetweenVulnerablePersons.shortest connections between vulnerable persons,5.35016,17.721549
-pole.CrimeTotals.count total number of crimes by type,20.035996,16.467849
-pole.CrimesInvestigatedBy.crimes investigated by officer Larive - no indexes,1.737577,1.090448
-pole.CrimesNewParticularAddress.crimes near to particular address,56.419396,119.744106
-pole.PeopleRelatedWithDrugCrimes.other related people associated with drugs crimes,5.261112,3.892564
-pole.PersonKnowSubgraphAlgorithms.betweenness centrality,21.811506,10.116932
-pole.ShortestPathPersonRelatedToCrime.shortest path between persons related to crimes,2.070575,3.051926
-pole.Top5VulnerablePeople.get top 5 vulnerable people,2.711948,1.861686
-pole.TopLocationsForCrimes.get top locations for crimes,39.658379,56.094166
-,,
+Test Name,Neo4j p(95) [ms],Memgraph p(95) [ms],ArangoDB p(95) [ms]
+crud.NodeSimpleCrud.creating node with properties,2.65072,1.682356,1.529681
+crud.NodeSimpleCrud.deleting nodes,1.19632,0.609891,0.370503
+crud.NodeSimpleCrud.updating node,1.901622,0.818037,1.103525
+crud.RelationshipSimpleCrud.creating relationship,1.341817,0.57157,0.303389
+crud.RelationshipSimpleCrud.deleting relationships,1.208022,16.724117,0.2496
+crud.RelationshipSimpleCrud.update relationships,1.201869,15.468208,0.362871
+pole.ConnectionsBetweenVulnerablePersons.shortest connections between vulnerable persons,5.35016,17.721549,
+pole.CrimeTotals.count total number of crimes by type,20.035996,16.467849,
+pole.CrimesInvestigatedBy.crimes investigated by officer Larive - no indexes,1.737577,1.090448,
+pole.CrimesNewParticularAddress.crimes near to particular address,56.419396,119.744106,
+pole.PeopleRelatedWithDrugCrimes.other related people associated with drugs crimes,5.261112,3.892564,
+pole.PersonKnowSubgraphAlgorithms.betweenness centrality,21.811506,10.116932,
+pole.ShortestPathPersonRelatedToCrime.shortest path between persons related to crimes,2.070575,3.051926,
+pole.Top5VulnerablePeople.get top 5 vulnerable people,2.711948,1.861686,
+pole.TopLocationsForCrimes.get top locations for crimes,39.658379,56.094166,

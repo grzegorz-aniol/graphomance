@@ -1,20 +1,20 @@
 services:
   memgraph:
-    image: memgraph/memgraph-platform:2.10.0-memgraph2.10.0-lab2.8.0-mage1.9
+    image: memgraph/memgraph-platform:${MEMGRAPH_VERSION}
     ports:
-      - 7688:7687
+      - ${MEMGRAPH_BOLT_PORT}:7687
       - 7444:7444
       - 3000:3000
     environment:
       - MEMGRAPH=--bolt-server-name-for-init=Neo4j/ --telemetry-enabled=false --storage-properties-on-edges=true
-#    healthcheck:
-#      test: bash -c 'netstat -ltn | grep - \':7687\''
-#      interval: 3s
-#      timeout: 30s
+    healthcheck:
+      test: nc -zw 1 localhost 7687
+      interval: 5s
+      timeout: 30s
+      retries: 5
     volumes:
 #      - ./data/memgraph/mg_lib:/var/lib/memgraph
 #      - ./data/memgraph/mg_log:/var/log/memgraph
 #      - ./data/memgraph/mg_etc:/etc/memgraph
       - ./datasets/pole:/datasets/pole
     entrypoint: ["/usr/bin/supervisord"]
-

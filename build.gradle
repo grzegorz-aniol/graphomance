@@ -32,6 +32,8 @@ dependencies {
     implementation 'org.reflections:reflections:0.10.2'
     implementation ('com.github.javafaker:javafaker:1.0.2')  { exclude module: 'snakeyaml' }
     implementation 'org.yaml:snakeyaml:2.2' // solves CVE errors in javafaker dependencies
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.5' // required to serialize LocalDate with ArangoDB driver
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.1"
     implementation 'org.jetbrains.kotlinx:dataframe:0.11.1'
     implementation 'org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.4.2'
 

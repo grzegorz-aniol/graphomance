@@ -18,7 +18,7 @@ internal class NeoSchemaApi(private val session: NeoSession) : SchemaApi {
         // no schema in neo4j
     }
 
-    override fun createRelationClass(className: String) {
+    override fun createRelationType(typeName: String) {
         // no schema in neo4j
     }
 

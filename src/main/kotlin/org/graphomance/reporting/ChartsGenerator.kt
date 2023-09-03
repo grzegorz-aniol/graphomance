@@ -5,7 +5,6 @@ import java.util.Locale
 import org.graphomance.api.DbType
 import org.jetbrains.kotlinx.dataframe.DataFrame
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
-import org.jetbrains.kotlinx.dataframe.api.emptyDataFrame
 import org.jetbrains.kotlinx.dataframe.api.into
 import org.jetbrains.kotlinx.dataframe.api.last
 import org.jetbrains.kotlinx.dataframe.api.rename
@@ -18,11 +17,12 @@ class TestResult(
     val testName: String,
     var neo4jP95: Double? = null,
     var memGraphP95: Double? = null,
+    var arangoDbP95: Double? = null,
 )
 
 class ChartsGenerator {
 
-    private val providers = arrayOf(DbType.NEO4J, DbType.MEMGRAPH)
+    private val providers = arrayOf(DbType.NEO4J, DbType.MEMGRAPH, DbType.ARANGODB)
 
     fun run() {
         println("Generating master results file")
@@ -40,6 +40,7 @@ class ChartsGenerator {
                     when (dbType) {
                         DbType.NEO4J -> testResult.neo4jP95 = p95
                         DbType.MEMGRAPH -> testResult.memGraphP95 = p95
+                        DbType.ARANGODB -> testResult.arangoDbP95 = p95
                         else -> Unit
                     }
                 }
@@ -47,7 +48,7 @@ class ChartsGenerator {
         }
 
         val finalDf = result.values.sortedBy { it.testName }.asIterable().toDataFrame()
-            .rename { all() }.into("Test Name", "Neo4j p(95) [ms]", "Memgraph p(95) [ms]")
+            .rename { all() }.into("Test Name", "Neo4j p(95) [ms]", "Memgraph p(95) [ms]", "ArangoDB p(95) [ms]")
         val outFileName = "./results/master-results.csv"
         println("Writing to file $outFileName")
         finalDf.writeCSV(outFileName)
