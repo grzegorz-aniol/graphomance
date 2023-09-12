@@ -16,11 +16,28 @@ services:
     healthcheck:
       test: wget http://localhost:7474 || exit 1
       interval: 5s
-      timeout: 30s
-      retries: 5
-      start_period: 3s
+      timeout: 4s
+      retries: 10
+      start_period: 15s
     volumes:
-      - ./data/neo4j5/data:/data
-      - ./data/neo4j5/plugins:/plugins
-      - ./data/neo4j5/backup:/backup
+#      - ./data/neo4j5/data:/data
+#      - ./data/neo4j5/plugins:/plugins
+#      - ./data/neo4j5/backup:/backup
       - ./datasets/pole:/import/datasets/pole
+      - ./datasets/fraud:/import/datasets/fraud
+  init-neo4j5:
+    image: neo4j/neo4j-admin:${NEO4J_ADMIN_VERSION}
+    depends_on:
+      neo4j5:
+        condition: service_healthy
+    command:
+      - /bin/bash
+      - -c
+      - |
+        bin/cypher-shell -a neo4j5 -u neo4j -p password -d neo4j 'create database pole;'
+        bin/cypher-shell -a neo4j5 -u neo4j -p password -d pole -f /import/datasets/pole/neo4j-load.cypher
+        bin/cypher-shell -a neo4j5 -u neo4j -p password -d neo4j 'create database fraud;'
+        bin/cypher-shell -a neo4j5 -u neo4j -p password -d fraud -f /import/datasets/fraud/neo4j-load.cypher
+    volumes:
+      - ./datasets/pole:/import/datasets/pole
+      - ./datasets/fraud:/import/datasets/fraud
