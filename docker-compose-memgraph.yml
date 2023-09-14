@@ -1,6 +1,6 @@
 services:
   memgraph:
-    image: memgraph/memgraph-platform:${MEMGRAPH_VERSION}
+    image: memgraph/memgraph-platform:${MEMGRAPH_PLATFORM_VERSION}
     ports:
       - ${MEMGRAPH_BOLT_PORT}:7687
       - 7444:7444
@@ -10,11 +10,30 @@ services:
     healthcheck:
       test: nc -zw 1 localhost 7687
       interval: 5s
-      timeout: 30s
-      retries: 5
+      timeout: 2s
+      retries: 50
     volumes:
 #      - ./data/memgraph/mg_lib:/var/lib/memgraph
 #      - ./data/memgraph/mg_log:/var/log/memgraph
 #      - ./data/memgraph/mg_etc:/etc/memgraph
       - ./datasets/pole:/datasets/pole
+      - ./datasets/fraud:/datasets/fraud
     entrypoint: ["/usr/bin/supervisord"]
+  init-memgraph:
+    image: memgraph/memgraph:${MEMGRAPH_VERSION}
+    depends_on:
+      memgraph:
+        condition: service_healthy
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        echo loading pole
+        /usr/bin/mgconsole -host memgraph < /datasets/pole/memgraph-load.cypher
+        echo status $$?
+        echo loading fraud
+        /usr/bin/mgconsole -host memgraph < /datasets/fraud/memgraph-load.cypher
+        echo status $$?
+    volumes:
+      - ./datasets/pole:/datasets/pole
+      - ./datasets/fraud:/datasets/fraud
