@@ -35,7 +35,11 @@ Dataset is loaded to Neo4j and Memgraph automatically on `docker-compose up` sta
 
 ## Running all test
 
+### Running docker compose
+Rename `.env.local` file to `.env` and run `docker-compose up -d`. You may need to wait few minutes until all services are up and datasets data are loaded.
+
 ### Master script
+Before running all tests, make sure the host OS is not busy. Verify with CPU utilization that all services are just on standby.
 Assuming all graph database services are up and running, you can run all tests with just one script command:
 > ./run.sh
 
