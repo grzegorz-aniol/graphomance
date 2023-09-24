@@ -39,3 +39,4 @@ mv ./build/*.csv ./results/arangodb/
 echo Combining results
 rm ./results/master-results.csv
 gradle combineResults
+mv ./results/master-results.csv ./results/master-results-`date +%Y-%m-%d`.csv
