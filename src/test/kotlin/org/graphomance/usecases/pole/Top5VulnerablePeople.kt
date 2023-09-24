@@ -2,7 +2,7 @@ package org.graphomance.usecases.pole
 
 import org.graphomance.api.DbType
 import org.graphomance.api.Session
-import org.graphomance.engine.TestTimer
+import org.graphomance.engine.QueryTimer
 import org.junit.jupiter.api.Test
 
 class Top5VulnerablePeople : PoleTestBase() {
@@ -10,7 +10,7 @@ class Top5VulnerablePeople : PoleTestBase() {
     //Memgraph: Not yet implemented: atom expression 'WHERE NOT (p:Person)-[:PARTY_TO]->(:Crime)'
 
     @Test
-    fun `get top 5 vulnerable people`(session: Session, testTimer: TestTimer) {
+    fun `get top 5 vulnerable people`(session: Session, testTimer: QueryTimer) {
         val query = when (session.getDbType()) {
             DbType.NEO4J ->
                 """

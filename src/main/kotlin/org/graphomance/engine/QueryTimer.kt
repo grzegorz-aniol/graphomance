@@ -1,6 +1,6 @@
 package org.graphomance.engine
 
-interface TestTimer {
+interface QueryTimer {
 
     fun timeMeasure(action: Runnable) = timeMeasureWithResult { action.run() }
 

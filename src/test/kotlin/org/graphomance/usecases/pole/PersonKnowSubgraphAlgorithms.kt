@@ -3,13 +3,13 @@ package org.graphomance.usecases.pole
 import org.assertj.core.api.Assertions.assertThat
 import org.graphomance.api.DbType
 import org.graphomance.api.Session
-import org.graphomance.engine.TestTimer
+import org.graphomance.engine.QueryTimer
 import org.junit.jupiter.api.Test
 
 class PersonKnowSubgraphAlgorithms : PoleTestBase() {
 
     @Test
-    fun `betweenness centrality`(session: Session, testTimer: TestTimer) {
+    fun `betweenness centrality`(session: Session, testTimer: QueryTimer) {
         val query = when (session.getDbType()) {
             // undirected graph projection, without normalization, 4 threads
             DbType.NEO4J ->

@@ -1,13 +1,13 @@
 package org.graphomance.usecases.pole
 
 import org.graphomance.api.Session
-import org.graphomance.engine.TestTimer
+import org.graphomance.engine.QueryTimer
 import org.junit.jupiter.api.Test
 
 class CrimeTotals : PoleTestBase() {
 
     @Test
-    fun `count total number of crimes by type`(session: Session, testTimer: TestTimer) {
+    fun `count total number of crimes by type`(session: Session, testTimer: QueryTimer) {
         val query =
             """
             MATCH (c:Crime)

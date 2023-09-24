@@ -1,18 +1,13 @@
 package org.graphomance.usecases.crud
 
 import com.github.javafaker.Faker
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-import java.util.Date
 import org.assertj.core.api.Assertions.assertThat
 import org.graphomance.api.DbType
 import org.graphomance.api.NodeIdentifier
 import org.graphomance.api.RelationshipIdentifier
 import org.graphomance.api.Session
 import org.graphomance.engine.GraphomanceTest
-import org.graphomance.engine.TestTimer
+import org.graphomance.engine.QueryTimer
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
@@ -70,7 +65,7 @@ class RelationshipSimpleCrud {
 
     @Test
     @Order(1)
-    fun `creating relationship`(session: Session, testTimer: TestTimer) {
+    fun `creating relationship`(session: Session, testTimer: QueryTimer) {
         val objectApi = session.objectApi()
         repeat(numOfRelationships) {
             val startIndex = faker.random().nextInt(numOfNodes)
@@ -86,7 +81,7 @@ class RelationshipSimpleCrud {
 
     @Test
     @Order(2)
-    fun `update relationships`(session: Session, testTimer: TestTimer) {
+    fun `update relationships`(session: Session, testTimer: QueryTimer) {
         val objectApi = session.objectApi()
         repeat(numOfRelationships) {
             val relationshipToUpdate = relationshipData[faker.random().nextInt(numOfRelationships)]
@@ -97,7 +92,7 @@ class RelationshipSimpleCrud {
 
     @Test
     @Order(3)
-    fun `deleting relationships`(session: Session, testTimer: TestTimer) {
+    fun `deleting relationships`(session: Session, testTimer: QueryTimer) {
         val objectApi = session.objectApi()
         relationshipData.forEach { relationship ->
             testTimer.timeMeasure { objectApi.deleteRelationship(relationship.typeName, relationship.id) }

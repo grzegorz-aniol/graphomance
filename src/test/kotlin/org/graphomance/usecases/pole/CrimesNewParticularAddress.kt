@@ -2,13 +2,13 @@ package org.graphomance.usecases.pole
 
 import org.graphomance.api.DbType
 import org.graphomance.api.Session
-import org.graphomance.engine.TestTimer
+import org.graphomance.engine.QueryTimer
 import org.junit.jupiter.api.Test
 
 class CrimesNewParticularAddress : PoleTestBase() {
 
     @Test
-    fun `crimes near to particular address`(session: Session, testTimer: TestTimer) {
+    fun `crimes near to particular address`(session: Session, testTimer: QueryTimer) {
         val query = when (session.getDbType()) {
             DbType.NEO4J ->
                 """

@@ -2,13 +2,13 @@ package org.graphomance.usecases.pole
 
 import org.assertj.core.api.Assertions.assertThat
 import org.graphomance.api.Session
-import org.graphomance.engine.TestTimer
+import org.graphomance.engine.QueryTimer
 import org.junit.jupiter.api.Test
 
 class CrimesInvestigatedBy : PoleTestBase() {
 
     @Test
-    fun `crimes investigated by officer Larive - no indexes`(session: Session, testTimer: TestTimer) {
+    fun `crimes investigated by officer Larive - no indexes`(session: Session, testTimer: QueryTimer) {
         // TODO: check there is no any index available for the query
 
         val query = """

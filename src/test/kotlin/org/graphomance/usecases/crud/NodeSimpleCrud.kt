@@ -1,15 +1,12 @@
 package org.graphomance.usecases.crud
 
 import com.github.javafaker.Faker
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 import org.assertj.core.api.Assertions.assertThat
 import org.graphomance.api.DbType
 import org.graphomance.api.NodeIdentifier
 import org.graphomance.api.Session
 import org.graphomance.engine.GraphomanceTest
-import org.graphomance.engine.TestTimer
-import org.junit.jupiter.api.AfterAll
+import org.graphomance.engine.QueryTimer
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Order
@@ -52,7 +49,7 @@ class NodeSimpleCrud {
 
     @Test
     @Order(1)
-    fun `creating node with properties`(session: Session, testTimer: TestTimer) {
+    fun `creating node with properties`(session: Session, testTimer: QueryTimer) {
         val objectApi = session.objectApi()
         repeat(numOfNodes) {
             val index = faker.random().nextInt(numOfAttributeSets)
@@ -65,7 +62,7 @@ class NodeSimpleCrud {
 
     @Test
     @Order(2)
-    fun `updating node`(session: Session, testTimer: TestTimer) {
+    fun `updating node`(session: Session, testTimer: QueryTimer) {
         val objectApi = session.objectApi()
         repeat(numOfNodes) {
             val index = faker.random().nextInt(numOfNodes)
@@ -78,7 +75,7 @@ class NodeSimpleCrud {
 
     @Test
     @Order(3)
-    fun `deleting nodes`(session: Session, testTimer: TestTimer) {
+    fun `deleting nodes`(session: Session, testTimer: QueryTimer) {
         val objectApi = session.objectApi()
         nodeData.forEach { node ->
             testTimer.timeMeasure {

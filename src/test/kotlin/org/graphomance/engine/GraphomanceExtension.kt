@@ -1,6 +1,7 @@
 package org.graphomance.engine
 
 import com.codahale.metrics.Timer
+import io.github.cdimascio.dotenv.Dotenv
 import java.util.concurrent.TimeUnit
 import org.graphomance.api.Connection
 import org.graphomance.api.DbType
@@ -23,9 +24,13 @@ import org.junit.jupiter.api.extension.ExecutionCondition
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
+import org.junit.jupiter.api.extension.TestInstanceFactory
+import org.junit.jupiter.api.extension.TestInstanceFactoryContext
 
 class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestExecutionCallback,
-    AfterEachCallback, AfterTestExecutionCallback, AfterAllCallback, ParameterResolver, ExecutionCondition {
+    AfterEachCallback, AfterTestExecutionCallback, AfterAllCallback, ParameterResolver, ExecutionCondition,
+    TestInstanceFactory
+{
 
     private var dbName: String?
     private var hostUrl: String
@@ -33,6 +38,7 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
     private lateinit var connection: Connection
     private lateinit var sessionProducer: SessionProducer
     private val namespace = ExtensionContext.Namespace.create(GraphomanceExtension::class.java.name)
+    private val dotenv = Dotenv.load()
 
     init {
         dbType = DbType.of(requireNotNull(getParameters("DB_TYPE")) { "Missing DB_TYPE parameter" })
@@ -82,24 +88,31 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
 
     override fun supportsParameter(parameterContext: ParameterContext, context: ExtensionContext): Boolean {
         val type = parameterContext.parameter.type
-        return type == Session::class.java || type == TestTimer::class.java
+        return type == Session::class.java || type == QueryTimer::class.java
 
     }
 
     override fun resolveParameter(parameterContext: ParameterContext, context: ExtensionContext): Any {
         return when (parameterContext.parameter.type) {
             Session::class.java -> createSession()
-            TestTimer::class.java -> produceTestTimer(context)
+            QueryTimer::class.java -> produceTestTimer(context)
             else -> throw RuntimeException("Cannot instantiate test parameter of class ${parameterContext.javaClass.name}")
         }
     }
 
-    private fun produceTestTimer(context: ExtensionContext): TestTimer {
+    override fun createTestInstance(
+        factoryContext: TestInstanceFactoryContext,
+        extensionContext: ExtensionContext
+    ): Any {
+        return factoryContext.testClass.constructors.first().newInstance()
+    }
+
+    private fun produceTestTimer(context: ExtensionContext): QueryTimer {
         if (context.testMethod.isEmpty) {
             throw RuntimeException("TestTimer can be used only within a test method")
         }
         val testCtx = getOrCreateTestExecutionContext(context)
-        return object : TestTimer {
+        return object : QueryTimer {
             override fun <T> timeMeasureWithResult(actionWithResult: () -> T): T {
                 testCtx.start()
                 try {
@@ -186,7 +199,7 @@ class GraphomanceExtension : BeforeAllCallback, BeforeEachCallback, BeforeTestEx
     }
 
     private fun getParameters(key: String): String? {
-        return System.getProperty(key)?.takeIf { it.isNotBlank() } ?: System.getenv(key)?.takeIf { it.isNotBlank() }
+        return dotenv[key]?.takeIf { it.isNotBlank() } ?: dotenv[key]?.takeIf { it.isNotBlank() }
     }
 
     private class TestExecutionContext(private val metric: Timer, private var expectedIterations: Int = 1) {

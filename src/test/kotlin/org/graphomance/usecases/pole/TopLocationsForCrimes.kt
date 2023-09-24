@@ -1,13 +1,13 @@
 package org.graphomance.usecases.pole
 
 import org.graphomance.api.Session
-import org.graphomance.engine.TestTimer
+import org.graphomance.engine.QueryTimer
 import org.junit.jupiter.api.Test
 
 class TopLocationsForCrimes : PoleTestBase() {
 
     @Test
-    fun `get top locations for crimes`(session: Session, testTimer: TestTimer) {
+    fun `get top locations for crimes`(session: Session, testTimer: QueryTimer) {
         val query =
                 """
                     MATCH (l:Location)<-[:OCCURRED_AT]-(:Crime)
