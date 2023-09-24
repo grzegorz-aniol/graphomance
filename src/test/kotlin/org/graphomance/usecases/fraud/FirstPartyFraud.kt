@@ -144,7 +144,7 @@ class FirstPartyFraud : FraudTestBase() {
         val writeSimilarityQuery = dbByTypeQueries(
             DbType.NEO4J to
             """
-                CALL { CALL gds.graph.drop('similarity') YIELD graphName as _ }                
+                CALL { CALL gds.graph.drop('similarity', false) YIELD graphName as _ }                
                 MATCH (c:Client) WHERE c.firstPartyFraudGroup IS NOT NULL
                 OPTIONAL MATCH (c)-[r:HAS_EMAIL|HAS_PHONE|HAS_SSN]->(id)
                 WITH gds.graph.project('similarity', c, id, {
