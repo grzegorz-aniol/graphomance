@@ -11,3 +11,15 @@ services:
       timeout: 30s
       retries: 5
     command: --server.support-info-api=disabled --server.telemetrics-api=false
+  init-arangodb:
+    image: arangodb:${ARANGODB_VERSION}
+    depends_on:
+      arangodb:
+        condition: service_healthy
+    entrypoint:
+      - /bin/ash
+      - -c
+      - |
+        echo creating default database
+        arangosh --log.level debug --server.password password --server.endpoint tcp://arangodb:8529 --javascript.execute-string "db._createDatabase('test');"
+        echo status $$?

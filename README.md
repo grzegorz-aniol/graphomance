@@ -8,12 +8,8 @@ The goal for this project is to create independent set of tests for different gr
 ## Supported database
 Graphomance supports following graph databases:
 * Neo4j 5.x
-* Memgraph 2.10.x 
+* Memgraph 2.x 
 * ArangoDB 3.11.x
-
-## Creating default database for ArangoDB
-
-> docker exec graphomance-arangodb-1 arangosh --log.level debug --server.password password --server.endpoint tcp://localhost:8529 --javascript.execute-string "db._createDatabase('test');"
 
 ## Datasets
 
@@ -25,14 +21,17 @@ This is crime investigation dataset, containing street-level crime in Greater Ma
 
 POLE stands for Person, Object, Location and Event. Dataset contains 61521 nodes and 104862 relationships.
 
-#### Loading POLE dataset to Memgraph
+Dataset is loaded to Neo4j and Memgraph automatically on `docker-compose up` stage.
 
-> docker exec -it graphomance-memgraph-1 /bin/bash -c 'mgconsole < /datasets/pole/memgraph-load.cypher'
+### Fraud
 
-#### Loading POLE dataset to Neo4j
+This is a synthetic fraud detection dataset generated and published by Neo4j on github repository at https://github.com/neo4j-graph-examples/fraud-detection/blob/main/README.adoc
+Queries used in test scenarios follow examples or they are inspired by [documentation page](https://github.com/neo4j-graph-examples/fraud-detection/blob/main/documentation/fraud-detection.adoc)
 
-> docker exec -it graphomance-neo4j5-1 bin/cypher-shell -u neo4j -p password -d neo4j 'create database pole;'
-> docker exec -it graphomance-neo4j5-1 bin/cypher-shell -u neo4j -p password -d pole -f /import/datasets/pole/neo4j-load.cypher
+Fraud dataset contains 332973 nodes and 980857 relationships.
+
+Dataset is loaded to Neo4j and Memgraph automatically on `docker-compose up` stage.
+
 
 ## Running all test
 
