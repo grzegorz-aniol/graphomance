@@ -20,6 +20,7 @@ services:
       - /bin/ash
       - -c
       - |
-        echo creating default database
+        echo Creating default database
         arangosh --log.level debug --server.password password --server.endpoint tcp://arangodb:8529 --javascript.execute-string "db._createDatabase('test');"
         echo status $$?
+        echo Done.

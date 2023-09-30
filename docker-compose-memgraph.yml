@@ -28,12 +28,13 @@ services:
       - /bin/bash
       - -c
       - |
-        echo loading pole
+        echo Loading POLE dataset
         /usr/bin/mgconsole -host memgraph < /datasets/pole/memgraph-load.cypher
         echo status $$?
-        echo loading fraud
+        echo Loading Fraud dataset
         /usr/bin/mgconsole -host memgraph < /datasets/fraud/memgraph-load.cypher
         echo status $$?
+        echo Done.
     volumes:
       - ./datasets/pole:/datasets/pole
       - ./datasets/fraud:/datasets/fraud

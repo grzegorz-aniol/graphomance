@@ -34,10 +34,13 @@ services:
       - /bin/bash
       - -c
       - |
+        echo Loading POLE dataset
         bin/cypher-shell -a neo4j5 -u neo4j -p password -d neo4j 'create database pole;'
         bin/cypher-shell -a neo4j5 -u neo4j -p password -d pole -f /import/datasets/pole/neo4j-load.cypher
+        echo Loading Fraud dataset
         bin/cypher-shell -a neo4j5 -u neo4j -p password -d neo4j 'create database fraud;'
-        bin/cypher-shell -a neo4j5 -u neo4j -p password -d fraud -f /import/datasets/fraud/neo4j-load.cypher
+        bin/cypher-shell -a neo4j5 -u neo4j -p password -d fraud -f /import/datasets/fraud/neo4j-load.cypher  
+        echo Done.
     volumes:
       - ./datasets/pole:/import/datasets/pole
       - ./datasets/fraud:/import/datasets/fraud
