@@ -27,10 +27,16 @@ class ArangoSchemaApi(
 	}
 
 	override fun createClass(className: String) {
+		if (classExists(className)) {
+			return
+		}
 		db.createCollection(className)
 	}
 
 	override fun createRelationType(typeName: String) {
+		if (classExists(typeName)) {
+			return
+		}
 		db.createCollection(typeName, CollectionCreateOptions().type(CollectionType.EDGES))
 	}
 
