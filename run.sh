@@ -1,5 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+set -o allexport
+source ./.env
+set +o allexport
 set -e
+
+echo NEO4J_VERSION=$NEO4J_VERSION
+echo MEMGRAPH_VERSION=$MEMGRAPH_VERSION
+echo ARANGODB_VERSION=$ARANGODB_VERSION
 
 ####################################################
 echo Neo4j tests dry run
@@ -37,6 +44,8 @@ mv ./build/*.csv ./results/arangodb/
 
 ####################################################
 echo Combining results
-rm ./results/master-results.csv
+rm ./results/master-results.csv || true
 gradle combineResults
-cp ./results/master-results.csv ./results/`date +%Y-%m-%d`-master-results.csv
+cp ./results/master-results.csv ./results/`date +%Y%m%d`_neo4j-$NEO4J_VERSION_memgraph-$MEMGRAPH_VERSION_arangodb-$ARANGODB_VERSION.csv
+
+echo DONE.

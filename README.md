@@ -68,9 +68,9 @@ The last step of the process combines all individual test results into master CS
 
 #### Recent versions tested
 ```
-NEO4J_VERSION=5.10.0-enterprise
-MEMGRAPH_VERSION=2.10.0
-ARANGODB_VERSION=3.11.2
+NEO4J_VERSION=5.12.0-enterprise
+MEMGRAPH_VERSION=2.11.1
+ARANGODB_VERSION=3.11.3
 ```
 
 **Here you can find [MASTER RESULTS FILE](results/master-results.csv)**
