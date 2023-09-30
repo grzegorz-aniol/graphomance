@@ -138,6 +138,18 @@ class FirstPartyFraud : FraudTestBase() {
         }
     }
 
+    /**
+     * Expected score distribution for bidirectional SIMILAR_TO results
+     * ╒═══════╤════════╕
+     * │r.score│count(*)│
+     * ╞═══════╪════════╡
+     * │0.2    │966     │
+     * ├───────┼────────┤
+     * │0.5    │474     │
+     * ├───────┼────────┤
+     * │1.0    │78      │
+     * └───────┴────────┘
+     */
     @Test
     @Order(3)
     fun `pairwise JACARD similarity scores`(session: Session, testTimer: QueryTimer) {
@@ -170,7 +182,7 @@ class FirstPartyFraud : FraudTestBase() {
                 YIELD node1, node2, similarity
                 WITH node1, node2, similarity
                 WHERE similarity > 0
-                MERGE (node1)-[r:SIMILAR_TO]-(node2)
+                CREATE (node1)-[r:SIMILAR_TO]->(node2)
                 SET r.score=similarity
                 RETURN 2*count(*) as bi_rels
             """.trimIndent()
