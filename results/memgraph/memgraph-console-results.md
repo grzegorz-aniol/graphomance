@@ -1,234 +1,271 @@
 NodeSimpleCrud STANDARD_ERROR
-    SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+    SLF4J: No SLF4J providers were found.
     SLF4J: Defaulting to no-operation (NOP) logger implementation
-    SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+    SLF4J: See https://www.slf4j.org/codes.html#noProviders for further details.
     ERROR StatusLogger Log4j2 could not find a logging implementation. Please add log4j-core to the classpath. Using SimpleLogger to log to the console...
 
 NodeSimpleCrud STANDARD_OUT
-    9/2/23, 8:25:57 PM =============================================================
+    9/30/23, 11:46:36 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     crud.NodeSimpleCrud.creating node with properties
                  count = 1000
-             mean rate = 420.44 calls/second
-                   min = 0.50 milliseconds
-                   max = 183.74 milliseconds
-                  mean = 1.08 milliseconds
-                stddev = 5.79 milliseconds
-                median = 0.75 milliseconds
-                  95% <= 1.68 milliseconds
-                  99% <= 2.82 milliseconds
+             mean rate = 478.13 calls/second
+                   min = 0.44 milliseconds
+                   max = 188.99 milliseconds
+                  mean = 1.00 milliseconds
+                stddev = 5.94 milliseconds
+                median = 0.71 milliseconds
+                  95% <= 1.40 milliseconds
+                  99% <= 2.31 milliseconds
     crud.NodeSimpleCrud.deleting nodes
                  count = 1000
-             mean rate = 1963.26 calls/second
-                   min = 0.32 milliseconds
-                   max = 1.26 milliseconds
-                  mean = 0.47 milliseconds
-                stddev = 0.09 milliseconds
-                median = 0.47 milliseconds
-                  95% <= 0.61 milliseconds
-                  99% <= 0.75 milliseconds
+             mean rate = 2100.86 calls/second
+                   min = 0.33 milliseconds
+                   max = 1.20 milliseconds
+                  mean = 0.44 milliseconds
+                stddev = 0.07 milliseconds
+                median = 0.44 milliseconds
+                  95% <= 0.53 milliseconds
+                  99% <= 0.65 milliseconds
     crud.NodeSimpleCrud.updating node
                  count = 1000
-             mean rate = 834.71 calls/second
-                   min = 0.40 milliseconds
-                   max = 13.08 milliseconds
-                  mean = 0.66 milliseconds
-                stddev = 0.64 milliseconds
-                median = 0.59 milliseconds
-                  95% <= 0.82 milliseconds
-                  99% <= 2.08 milliseconds
+             mean rate = 971.80 calls/second
+                   min = 0.34 milliseconds
+                   max = 2.61 milliseconds
+                  mean = 0.53 milliseconds
+                stddev = 0.11 milliseconds
+                median = 0.52 milliseconds
+                  95% <= 0.68 milliseconds
+                  99% <= 0.80 milliseconds
 
 
 
 RelationshipSimpleCrud STANDARD_OUT
-    9/2/23, 8:26:24 PM =============================================================
+    9/30/23, 11:49:10 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     crud.RelationshipSimpleCrud.creating relationship
                  count = 1000
-             mean rate = 37.36 calls/second
-                   min = 0.29 milliseconds
-                   max = 1.35 milliseconds
-                  mean = 0.44 milliseconds
-                stddev = 0.08 milliseconds
-                median = 0.43 milliseconds
-                  95% <= 0.57 milliseconds
-                  99% <= 0.62 milliseconds
+             mean rate = 6.51 calls/second
+                   min = 0.42 milliseconds
+                   max = 43.77 milliseconds
+                  mean = 0.81 milliseconds
+                stddev = 1.69 milliseconds
+                median = 0.60 milliseconds
+                  95% <= 1.30 milliseconds
+                  99% <= 4.16 milliseconds
     crud.RelationshipSimpleCrud.deleting relationships
                  count = 1000
-             mean rate = 75.19 calls/second
-                   min = 0.66 milliseconds
-                   max = 33.36 milliseconds
-                  mean = 13.05 milliseconds
-                stddev = 2.26 milliseconds
-                median = 12.45 milliseconds
-                  95% <= 16.72 milliseconds
-                  99% <= 22.30 milliseconds
+             mean rate = 13.10 calls/second
+                   min = 0.68 milliseconds
+                   max = 123.82 milliseconds
+                  mean = 76.23 milliseconds
+                stddev = 5.77 milliseconds
+                median = 74.55 milliseconds
+                  95% <= 84.74 milliseconds
+                  99% <= 101.13 milliseconds
     crud.RelationshipSimpleCrud.update relationships
                  count = 1000
-             mean rate = 38.00 calls/second
-                   min = 0.62 milliseconds
-                   max = 26.92 milliseconds
-                  mean = 12.99 milliseconds
-                stddev = 1.72 milliseconds
-                median = 12.64 milliseconds
-                  95% <= 15.47 milliseconds
-                  99% <= 20.93 milliseconds
+             mean rate = 6.54 calls/second
+                   min = 1.00 milliseconds
+                   max = 141.20 milliseconds
+                  mean = 76.42 milliseconds
+                stddev = 5.71 milliseconds
+                median = 74.73 milliseconds
+                  95% <= 84.43 milliseconds
+                  99% <= 98.96 milliseconds
+
+
+
+FirstPartyFraud STANDARD_OUT
+    9/30/23, 11:51:14 AM ===========================================================
+
+    -- Timers ----------------------------------------------------------------------
+    fraud.FirstPartyFraud.Identify clients sharing PII
+                 count = 100
+             mean rate = 0.81 calls/second
+                   min = 7.56 milliseconds
+                   max = 18.11 milliseconds
+                  mean = 10.02 milliseconds
+                stddev = 2.15 milliseconds
+                median = 9.54 milliseconds
+                  95% <= 15.04 milliseconds
+                  99% <= 18.11 milliseconds
+    fraud.FirstPartyFraud.Identify groups of clients sharing PII - fraud rings
+                 count = 100
+             mean rate = 0.81 calls/second
+                   min = 246.12 milliseconds
+                   max = 298.75 milliseconds
+                  mean = 259.20 milliseconds
+                stddev = 13.26 milliseconds
+                median = 253.11 milliseconds
+                  95% <= 289.47 milliseconds
+                  99% <= 298.75 milliseconds
+    fraud.FirstPartyFraud.pairwise JACARD similarity scores
+                 count = 100
+             mean rate = 1.03 calls/second
+                   min = 854.37 milliseconds
+                   max = 1045.76 milliseconds
+                  mean = 907.53 milliseconds
+                stddev = 49.40 milliseconds
+                median = 886.02 milliseconds
+                  95% <= 1016.48 milliseconds
+                  99% <= 1045.76 milliseconds
 
 
 
 ConnectionsBetweenVulnerablePersons STANDARD_OUT
-    9/2/23, 8:26:26 PM =============================================================
+    9/30/23, 11:51:15 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     pole.ConnectionsBetweenVulnerablePersons.shortest connections between vulnerable persons
                  count = 100
-             mean rate = 90.89 calls/second
-                   min = 8.54 milliseconds
-                   max = 20.26 milliseconds
-                  mean = 10.94 milliseconds
-                stddev = 2.56 milliseconds
-                median = 10.10 milliseconds
-                  95% <= 17.72 milliseconds
-                  99% <= 19.21 milliseconds
+             mean rate = 117.98 calls/second
+                   min = 7.12 milliseconds
+                   max = 14.31 milliseconds
+                  mean = 8.44 milliseconds
+                stddev = 1.63 milliseconds
+                median = 7.76 milliseconds
+                  95% <= 13.06 milliseconds
+                  99% <= 13.85 milliseconds
 
 
 
 CrimeTotals STANDARD_OUT
-    9/2/23, 8:26:27 PM =============================================================
+    9/30/23, 11:51:16 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     pole.CrimeTotals.count total number of crimes by type
                  count = 100
-             mean rate = 69.26 calls/second
-                   min = 12.45 milliseconds
-                   max = 19.55 milliseconds
-                  mean = 14.41 milliseconds
-                stddev = 1.26 milliseconds
-                median = 14.20 milliseconds
-                  95% <= 16.47 milliseconds
-                  99% <= 18.94 milliseconds
+             mean rate = 72.20 calls/second
+                   min = 11.38 milliseconds
+                   max = 28.22 milliseconds
+                  mean = 13.83 milliseconds
+                stddev = 3.00 milliseconds
+                median = 13.01 milliseconds
+                  95% <= 23.83 milliseconds
+                  99% <= 28.22 milliseconds
 
 
 
 CrimesInvestigatedBy STANDARD_OUT
-    9/2/23, 8:26:28 PM =============================================================
+    9/30/23, 11:51:17 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     pole.CrimesInvestigatedBy.crimes investigated by officer Larive - no indexes
                  count = 1000
-             mean rate = 1308.98 calls/second
-                   min = 0.48 milliseconds
-                   max = 9.04 milliseconds
-                  mean = 0.75 milliseconds
-                stddev = 0.43 milliseconds
-                median = 0.69 milliseconds
-                  95% <= 1.09 milliseconds
-                  99% <= 1.41 milliseconds
+             mean rate = 1153.97 calls/second
+                   min = 0.51 milliseconds
+                   max = 17.09 milliseconds
+                  mean = 0.86 milliseconds
+                stddev = 0.80 milliseconds
+                median = 0.73 milliseconds
+                  95% <= 1.30 milliseconds
+                  99% <= 2.38 milliseconds
 
 
 
 CrimesNewParticularAddress STANDARD_OUT
-    9/2/23, 8:26:38 PM =============================================================
+    9/30/23, 11:51:28 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     pole.CrimesNewParticularAddress.crimes near to particular address
                  count = 100
-             mean rate = 9.34 calls/second
-                   min = 97.64 milliseconds
-                   max = 140.28 milliseconds
-                  mean = 106.96 milliseconds
-                stddev = 7.13 milliseconds
-                median = 104.95 milliseconds
-                  95% <= 119.74 milliseconds
-                  99% <= 126.94 milliseconds
+             mean rate = 9.46 calls/second
+                   min = 96.35 milliseconds
+                   max = 133.94 milliseconds
+                  mean = 105.78 milliseconds
+                stddev = 9.94 milliseconds
+                median = 100.61 milliseconds
+                  95% <= 129.34 milliseconds
+                  99% <= 133.94 milliseconds
 
 
 
 PeopleRelatedWithDrugCrimes STANDARD_OUT
-    9/2/23, 8:26:39 PM =============================================================
+    9/30/23, 11:51:28 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     pole.PeopleRelatedWithDrugCrimes.other related people associated with drugs crimes
                  count = 100
-             mean rate = 324.05 calls/second
-                   min = 2.53 milliseconds
-                   max = 6.14 milliseconds
-                  mean = 3.07 milliseconds
+             mean rate = 239.55 calls/second
+                   min = 3.25 milliseconds
+                   max = 6.54 milliseconds
+                  mean = 4.15 milliseconds
                 stddev = 0.59 milliseconds
-                median = 2.84 milliseconds
-                  95% <= 3.89 milliseconds
-                  99% <= 5.92 milliseconds
+                median = 4.02 milliseconds
+                  95% <= 5.31 milliseconds
+                  99% <= 5.40 milliseconds
 
 
 
 PersonKnowSubgraphAlgorithms STANDARD_OUT
-    9/2/23, 8:26:41 PM =============================================================
+    9/30/23, 11:51:30 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     pole.PersonKnowSubgraphAlgorithms.betweenness centrality
                  count = 200
-             mean rate = 114.45 calls/second
-                   min = 7.51 milliseconds
-                   max = 14.23 milliseconds
-                  mean = 8.68 milliseconds
-                stddev = 0.89 milliseconds
-                median = 8.60 milliseconds
-                  95% <= 10.12 milliseconds
-                  99% <= 13.14 milliseconds
+             mean rate = 101.53 calls/second
+                   min = 7.76 milliseconds
+                   max = 14.72 milliseconds
+                  mean = 9.81 milliseconds
+                stddev = 1.23 milliseconds
+                median = 9.80 milliseconds
+                  95% <= 12.50 milliseconds
+                  99% <= 13.93 milliseconds
 
 
 
 ShortestPathPersonRelatedToCrime STANDARD_OUT
-    9/2/23, 8:26:41 PM =============================================================
+    9/30/23, 11:51:30 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     pole.ShortestPathPersonRelatedToCrime.shortest path between persons related to crimes
                  count = 100
-             mean rate = 439.43 calls/second
-                   min = 1.77 milliseconds
-                   max = 11.97 milliseconds
-                  mean = 2.25 milliseconds
-                stddev = 1.05 milliseconds
-                median = 2.06 milliseconds
-                  95% <= 3.05 milliseconds
-                  99% <= 4.10 milliseconds
+             mean rate = 516.20 calls/second
+                   min = 1.53 milliseconds
+                   max = 11.56 milliseconds
+                  mean = 1.91 milliseconds
+                stddev = 1.04 milliseconds
+                median = 1.76 milliseconds
+                  95% <= 2.10 milliseconds
+                  99% <= 4.90 milliseconds
 
 
 
 Top5VulnerablePeople STANDARD_OUT
-    9/2/23, 8:26:41 PM =============================================================
+    9/30/23, 11:51:31 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     pole.Top5VulnerablePeople.get top 5 vulnerable people
                  count = 100
-             mean rate = 776.58 calls/second
-                   min = 1.08 milliseconds
-                   max = 3.34 milliseconds
-                  mean = 1.27 milliseconds
+             mean rate = 892.73 calls/second
+                   min = 0.92 milliseconds
+                   max = 3.64 milliseconds
+                  mean = 1.10 milliseconds
                 stddev = 0.35 milliseconds
-                median = 1.15 milliseconds
-                  95% <= 1.86 milliseconds
-                  99% <= 2.98 milliseconds
+                median = 0.99 milliseconds
+                  95% <= 1.57 milliseconds
+                  99% <= 2.62 milliseconds
 
 
 
 TopLocationsForCrimes STANDARD_OUT
-    9/2/23, 8:26:46 PM =============================================================
+    9/30/23, 11:51:35 AM ===========================================================
 
     -- Timers ----------------------------------------------------------------------
     pole.TopLocationsForCrimes.get top locations for crimes
                  count = 100
-             mean rate = 20.86 calls/second
-                   min = 42.05 milliseconds
-                   max = 78.94 milliseconds
-                  mean = 47.87 milliseconds
-                stddev = 5.70 milliseconds
-                median = 46.37 milliseconds
-                  95% <= 56.09 milliseconds
-                  99% <= 78.88 milliseconds
+             mean rate = 21.84 calls/second
+                   min = 39.87 milliseconds
+                   max = 64.08 milliseconds
+                  mean = 45.72 milliseconds
+                stddev = 3.37 milliseconds
+                median = 45.15 milliseconds
+                  95% <= 50.55 milliseconds
+                  99% <= 56.31 milliseconds
 
 
 
-Gradle Test Executor 12 finished executing tests.
+Gradle Test Executor 11 finished executing tests.

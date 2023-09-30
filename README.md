@@ -66,11 +66,19 @@ The last step of the process combines all individual test results into master CS
 
 ### Test results
 
+#### Recent versions tested
+```
+NEO4J_VERSION=5.10.0-enterprise
+MEMGRAPH_VERSION=2.10.0
+ARANGODB_VERSION=3.11.2
+```
+
 **Here you can find [MASTER RESULTS FILE](results/master-results.csv)**
 
-You can find individual test results in sub folder:
+You can find individual test results in following sub folders:
 * [Neo4j results](results/neo4j/).
 * [Memgraph results](results/memgraph/).
+* [ArangoDB results](results/arangodb/).
 
 
 ### Graph database differences

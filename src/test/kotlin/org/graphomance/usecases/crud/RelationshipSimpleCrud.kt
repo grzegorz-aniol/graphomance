@@ -46,7 +46,7 @@ class RelationshipSimpleCrud {
         val schemaApi = session.schemaApi()
         schemaApi.createClasses(classNames)
         schemaApi.createRelationshipTypes(typeNames)
-        repeat(numOfAttributeSets) { index ->
+        repeat(numOfAttributeSets) {
             val map = mutableMapOf<String, Any>()
             map["name"] = faker.name().fullName()
             map["address"] = faker.address().fullAddress()
