@@ -34,7 +34,6 @@ class NodeSimpleCrud {
 
     @BeforeAll
     fun generateNodesData(session: Session) {
-        session.cleanDataInDatabase()
         session.schemaApi().createClasses(classNames)
         repeat(numOfAttributeSets) {
             val map = mutableMapOf<String, Any>()

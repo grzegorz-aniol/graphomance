@@ -42,7 +42,6 @@ class RelationshipSimpleCrud {
 
     @BeforeAll
     fun generateNodesData(session: Session) {
-        session.cleanDataInDatabase()
         val objectApi = session.objectApi()
         val schemaApi = session.schemaApi()
         schemaApi.createClasses(classNames)
