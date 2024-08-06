@@ -24,6 +24,7 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     implementation group: 'io.dropwizard.metrics', name: 'metrics-core', version: '3.2.6'
     implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
     implementation group: 'org.neo4j.driver', name: 'neo4j-java-driver', version: neo4jVersion
@@ -39,7 +40,7 @@ dependencies {
     implementation 'org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.4.2'
     implementation 'io.github.cdimascio:dotenv-kotlin:6.4.1'
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:${kotlinVersion}"
     testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testImplementation 'org.junit.platform:junit-platform-suite-api:1.10.0'
     testImplementation 'org.junit.platform:junit-platform-suite-engine:1.10.0'
